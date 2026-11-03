@@ -262,6 +262,8 @@ Create a versioned quality profile for every project. The deterministic policy e
 
 Standards and tools are versioned in the profile. The initial references are OWASP ASVS 5.0.0, W3C WCAG 2.2, Google Search Essentials and current Core Web Vitals definitions. Keep standards identifiers and URLs in the profile registry so policy updates are reviewed rather than silently changing old project results.
 
+Reference sources: [OWASP ASVS 5.0.0](https://asvs.owasp.org/downloads/), [W3C WCAG 2.2](https://www.w3.org/TR/WCAG22/), [Google Search Essentials](https://developers.google.com/search/docs/essentials), [Core Web Vitals](https://web.dev/articles/vitals).
+
 ### Check result and release gate
 
 Each finding has severity (critical/high/medium/low/info), status (open/fixed/accepted/not-applicable/not-verified), evidence reference, affected version/resource and actionable remediation. Check runs are immutable records of the exact artifact/build, policy version, tool versions and environment. The public API exposes a summary and safe evidence only; secret values, raw credentials, sensitive source snippets and exploitable exploit details are redacted or access-controlled.
