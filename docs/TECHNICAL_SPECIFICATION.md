@@ -75,6 +75,9 @@
 - **NotificationPreference:** user, project scope, event, channel, enable, quiet hours.
 - **Notification:** recipient, event, channel, delivery state, retry state.
 - **AIInteraction:** provider key, task type, model ID, artifact references and safe usage metadata.
+- **QualityProfile:** project, versioned baseline, risk classification, applicable checks, thresholds and approved exceptions.
+- **QualityCheckRun:** project/build/artifact version, profile version, runner/tool versions, environment, lifecycle state, timestamps and summary.
+- **QualityFinding:** check run, stable rule ID, severity, status, evidence reference, affected resource, remediation guidance and optional exception record.
 
 ### 4.2 Data invariants
 
@@ -186,7 +189,7 @@ All endpoints require authorization except health, registration/login and signed
 - POST /api/v1/projects/:projectId/previews
 - POST /api/v1/projects/:projectId/deployments
 - GET /api/v1/deployments/:deploymentId
-- POST /api/v1/projects/:projectId/exports
+- GET /api/v1/projects/:projectId/quality/profile\n- PATCH /api/v1/projects/:projectId/quality/profile (authorized, audited exceptions only)\n- POST /api/v1/projects/:projectId/quality/check-runs\n- GET /api/v1/projects/:projectId/quality/check-runs/:runId\n- GET /api/v1/projects/:projectId/quality/findings\n- POST /api/v1/projects/:projectId/quality/findings/:findingId/exceptions\n- POST /api/v1/projects/:projectId/exports
 
 ### Telegram and notifications
 
@@ -242,7 +245,32 @@ The user sees a concise cause, what was preserved and the next available action.
 - Maintain health/readiness endpoints, structured errors and job metrics.
 - Document backup restore, failed deployment rollback, retention and incident response.
 
-## 12. Verification required during implementation
+## 12. Quality engineering policy
+
+### Policy selection
+
+Create a versioned quality profile for every project. The deterministic policy engine derives applicable checks from project type, public/private visibility, data classification, authentication, payments, external integrations and deployment target. Users can see the defaults in ordinary language; only advanced users need to inspect technical controls. A profile change is versioned and cannot erase earlier check results.
+
+### Baseline targets
+
+- **Security:** use OWASP ASVS 5.0 Level 1 as the default verification checklist for web applications. Increase required controls and add expert review for elevated-risk projects. Run secret detection, dependency/license checks, static analysis, permission-boundary tests and applicable dynamic checks. Never claim security certification from automated scans.
+- **Accessibility:** target WCAG 2.2 AA for generated user interfaces. Combine automated analysis with keyboard navigation, focus visibility, zoom/reflow and screen-reader sampling. Keep automated and manual coverage separate.
+- **Performance:** optimize for mobile and slow connections. Track lab metrics per build and, after launch, field Core Web Vitals (LCP, INP, CLS). Initial good targets are LCP ≤ 2.5 s, INP ≤ 200 ms and CLS ≤ 0.1 at the 75th percentile. Do not mark field targets met without sufficient real-user data.
+- **SEO:** enable technical SEO checks only for public indexable pages: crawlability, canonical URLs, metadata, sitemap/robots behavior, semantic headings/links and valid structured data. Private routes must not leak into an index. Rankings are outside the product's guarantee.
+- **Reliability and maintainability:** validate types, formatting, lint, critical route behavior, link integrity, supported browser/mobile layouts, migration safety, backup/restore steps, deployment health checks and rollback availability.
+- **Privacy:** minimize collected data; document purpose, retention, export/deletion and third-party transfer for each sensitive data class. Prevent personal data, credentials and source contents from appearing in telemetry unless explicitly required and protected.
+
+Standards and tools are versioned in the profile. The initial references are OWASP ASVS 5.0.0, W3C WCAG 2.2, Google Search Essentials and current Core Web Vitals definitions. Keep standards identifiers and URLs in the profile registry so policy updates are reviewed rather than silently changing old project results.
+
+### Check result and release gate
+
+Each finding has severity (critical/high/medium/low/info), status (open/fixed/accepted/not-applicable/not-verified), evidence reference, affected version/resource and actionable remediation. Check runs are immutable records of the exact artifact/build, policy version, tool versions and environment. The public API exposes a summary and safe evidence only; secret values, raw credentials, sensitive source snippets and exploitable exploit details are redacted or access-controlled.
+
+Before preview publication or production deployment, evaluate the policy against the exact build. Block release by default on unresolved critical/high security findings, failed critical user journeys, or mandatory checks that are not verified. Warnings require a visible acknowledgement; exceptions require a role-authorized actor, a reason, expiry/review date where applicable, and an audit event. A new artifact version invalidates relevant earlier results and triggers only the affected checks again. External audits, legal compliance and guarantees that a site is vulnerability-free are never inferred from a passing automated pipeline.
+
+Quality execution runs as bounded background jobs outside API processes and outside the untrusted build sandbox where appropriate. Use isolated runners, timeouts, resource limits, fixed tool images and redacted logs. Store machine-readable reports by access-controlled object reference; escape/sanitize report data before rendering it in the dashboard.
+
+## 13. Verification required during implementation
 
 - Domain unit tests for stage transitions, approval policy and readiness math.
 - PostgreSQL/Redis API integration tests.
