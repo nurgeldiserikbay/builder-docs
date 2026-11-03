@@ -27,6 +27,7 @@ A person with a phone and internet connection can describe a website or applicat
 - Update migrations, API schemas, tests, docs and user-facing explanations together.
 - Provide local setup with .env.example and safe mocks for unavailable providers. Never commit real credentials.
 - Do not claim a check, integration, build, preview or deployment succeeded unless it was actually verified.
+- Apply the versioned quality profile to each generated build. Enforce the technical quality gates and truthful unknown states defined in the technical specification; never equate automated scans with certification.
 - Do not perform destructive data changes or publish to a live external service without explicit confirmation.
 
 ## Completion criteria
