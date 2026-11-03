@@ -66,7 +66,9 @@
 - **ReviewRequest:** конкретная версия артефакта, snapshot policy/reviewers, status.
 - **Approval:** review request, reviewer, decision, comment, exact artifact version, timestamp.
 - **ActivityEvent:** actor, project, channel, action, entity reference, safe metadata, timestamp.
-- **FileObject:** object key, size, MIME, checksum, malware scan state, uploader, retention.
+- **FileObject:** object key, size, MIME, checksum, malware scan state, uploader, retention, owning project/stage, visibility.
+- **UserAIInstruction:** project, owner, source file/text reference, extracted-text checksum, version, scope (project/stage/task), status, findings, validator/profile version, enabledAt/by, disabledAt/by, timestamps.
+- **StageMaterialPolicy:** stage template/version, allowed input/output artifact types and formats, size/count limits, required/optional flags, validation and export rules.
 - **BuildJob:** job type, state, idempotency key, attempt, limits, log reference, result.
 - **PreviewEnvironment:** build, opaque preview ID, URL, expiry, state.
 - **ExternalConnection:** workspace/provider, encrypted credential reference, scopes, state.
@@ -92,6 +94,8 @@
 - Project requirement/decision changes increment a revision; generated plans and artifacts record the exact input revision and capability manifest version.
 - Decision preferences can only narrow supported options and steer defaults; product safety policy and explicit confirmations for external side effects always take precedence.
 - Every state-changing request creates an activity event transactionally.
+- A file or artifact is always scoped to a project and, when applicable, a stage; membership alone does not grant read/download permission.
+- UserAIInstruction is never sent to a model unless that exact version passed checks, is enabled by an authorized project owner/manager, and is within its declared scope.
 
 ## 5. State machines and workflow rules
 
@@ -131,6 +135,24 @@ Define typed AI tasks: intake extraction, follow-up suggestions, type recommenda
 Every AI response is schema-validated and length-limited. Invalid output may be retried once, then surfaced as a recoverable error. Provider failures do not mutate project state.
 
 AI cannot confirm requirements, change permissions, approve a stage, skip required checks, access provider credentials or publish. A user's explicit create/revise request authorizes generating a candidate artifact/code version for isolated validation and preview against the accepted requirements; it does not authorize changing confirmed requirements or making external changes. AI returns a typed proposal/change set; deterministic validators and project policy decide whether it can become a preview candidate. No per-library/framework approval is required when it follows the agreed technical plan. External account connection, paid action, code handoff and production deployment always require separate user confirmation. Forms and manually entered structured data remain available if the provider is unavailable.
+
+#### User-provided AI instruction pipeline
+
+Use typed states: `uploaded`, `scanning`, `needs_changes`, `rejected`, `approved`, `active`, `disabled`, `deleted`. `approved` is not active until an authorized user explicitly enables that exact version. A replacement creates a new version; an active prior version is disabled while the new one is checked.
+
+The pipeline is deterministic and fail-closed:
+1. Check project permission, extension/MIME/magic bytes, configured size/page limits, checksum, malware and archive/decompression limits. Keep the object private and quarantine it from parsers/models until checks pass.
+2. Extract plain text in a constrained parser without executing embedded code, macros, links or attachments. Apply encoding, page-count, token/character and content-length limits; retain source provenance.
+3. Run versioned deterministic pattern/policy checks plus a separately identified classifier for prompt injection, requests for secrets/data exfiltration, unsafe code/commands, permission changes, policy bypass or harmful instructions. Classifier failure must not skip deterministic checks; uncertain/high-risk results remain inactive and require editing/re-upload or human review under an explicit policy.
+4. Return stable finding codes, severity, safe excerpt/position, explanation and remediation. Do not expose another project's data or echo sensitive content into logs. Allow the owner to edit, remove the flagged passage, upload a new version or delete it. Do not silently strip text and activate a modified instruction.
+5. An authorized owner/manager explicitly enables an approved version and chooses project, stage or task scope. For every AI call, inject it in a labeled untrusted-context field after system/product instructions; never concatenate it as an instruction with equal/higher priority. Revalidate scope and status at use time. It cannot change requirements/decisions, permissions, safety policy, quality gates or authorize side effects.
+6. Record version/checker revision, status changes, actor, scope and safe finding metadata in the audit log. Provide disable/revoke/delete and project/account retention/export behavior. Redact content from telemetry and provider logs where configurable.
+
+Instruction checks detect known patterns and reduce risk; they do not certify arbitrary text as harmless. The UI must say so plainly. A failed/unavailable scanner or classifier never grants approval; users can continue without custom instructions using the normal BuildPath flow.
+
+#### Stage material upload and export
+
+Every StageDefinition version declares input/output artifact types, allowed formats, maximum count/size, required/optional status, validation checks and export formats. A stage can start without optional materials; required inputs block only that stage and explain how to supply them. Users can upload or download materials for any stage they have permission to access. Each upload is private, scanned before parsing, checksummed and versioned; each export is generated from a specific artifact version, access-checked, audited and delivered using a short-lived URL. Never overwrite a prior version silently. The UI must state when a file is only attached for human reference versus actually parsed or used to build.
 
 For each requirement, preserve provenance: user answer, imported material, deterministic validation or AI proposal. Keep confirmed requirements distinct from assumptions and open questions.
 
@@ -243,6 +265,16 @@ The list below is the endpoint inventory, not a substitute for schemas. The Open
 
 - POST /api/v1/projects/:projectId/files/upload-intents
 - POST /api/v1/projects/:projectId/files/:fileId/complete
+- GET /api/v1/projects/:projectId/stages/:stageId/materials (authorized list and stage policy)
+- POST /api/v1/projects/:projectId/stages/:stageId/materials/upload-intents
+- POST /api/v1/projects/:projectId/stages/:stageId/materials/:materialId/complete
+- POST /api/v1/projects/:projectId/stages/:stageId/exports (artifact/version and requested format)
+- GET /api/v1/exports/:exportId (authorized status and short-lived download URL)
+- POST /api/v1/projects/:projectId/ai-instructions (create from validated text or completed upload)
+- GET /api/v1/projects/:projectId/ai-instructions (metadata/status only; content requires authorized scope)
+- POST /api/v1/projects/:projectId/ai-instructions/:instructionId/enable
+- POST /api/v1/projects/:projectId/ai-instructions/:instructionId/disable
+- DELETE /api/v1/projects/:projectId/ai-instructions/:instructionId
 - POST /api/v1/projects/:projectId/imports
 - POST /api/v1/projects/:projectId/site-generations
 - POST /api/v1/projects/:projectId/site-changes
@@ -272,7 +304,7 @@ The concrete DTOs and response schemas are the OpenAPI contracts; arbitrary unty
 ## 8. Code generation and build isolation
 
 - Accept only configured file types; validate extension, MIME and magic bytes; cap file size.
-- Keep uploads private, scan before processing, use short-lived signed URLs.
+- Keep uploads private, scan before processing, use short-lived signed URLs. User AI instructions require the separate staged validation pipeline in §6; file completion alone never makes text available to a model.
 - Never run project code in the API or web process.
 - Execute each build in a disposable sandbox with non-root UID, bounded CPU/RAM/disk/time, read-only base image, no host socket or host mounts.
 - Restrict network egress by default; block cloud metadata and internal service ranges; allow only explicitly required package registries and integrations through a controlled proxy.
@@ -293,7 +325,7 @@ The concrete DTOs and response schemas are the OpenAPI contracts; arbitrary unty
 - Initial bot mode is private chat. Group use is optional later and needs explicit project configuration plus per-user verification.
 - Encrypt external provider credentials with a managed key. Do not put tokens in logs, build variables, source files or client responses.
 - Provider OAuth uses single-use state, PKCE where supported, exact allowlisted redirect URIs, minimal scopes and explicit user consent. Validate callback state, bind the resulting connection to the initiating workspace, support revocation, and never pass connection tokens to AI or build containers.
-- Rate-limit auth, AI, uploads, URL imports, builds, deploy and invitations.
+- Rate-limit auth, AI, uploads, URL imports, builds, deploy and invitations. Apply tenant/project/stage authorization, configured size/count limits, retention and audit rules to every file and export. Do not log custom instruction bodies.
 - Account export and deletion, data retention, backup and restore behavior are documented before production.
 
 ### URL import SSRF defenses
