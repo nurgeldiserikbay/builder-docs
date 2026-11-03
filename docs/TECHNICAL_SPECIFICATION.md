@@ -57,7 +57,7 @@
 - **StageDefinition:** версия шаблона этапа, правила входа/выхода, допустимые зависимости.
 - **ProjectStage:** project, stage definition/version, dependencies, order, status, required flag, checklist, review policy, assignee.
 - **StageMember:** участник и stage-level role.
-- **Requirement:** category, title, text, priority, status, source type/reference, author, timestamps.
+- **Requirement:** category, title, text, priority, status (`proposed`, `confirmed`, `assumption`, `open_question`, `rejected`), source type/reference, author, `confirmedBy/At`, `supersedesId`, timestamps. Only confirmed requirements drive generation; assumptions must remain visible.
 - **Decision:** category (product/technology/code-storage/deployment/integration/operations), вопрос и простой summary влияния, варианты, recommended option + rationale, выбранная опция, status (proposed/accepted/rejected/deferred), `requires_explicit_confirmation`, provenance, связанный этап и actor/timestamp.
 - **Artifact:** stage, тип, заголовок, ссылка на current version, visibility.
 - **ArtifactVersion:** immutable object reference, номер, checksum, creator, source, metadata.
@@ -75,6 +75,7 @@
 - **NotificationPreference:** user, project scope, event, channel, enable, quiet hours.
 - **Notification:** recipient, event, channel, delivery state, retry state.
 - **AIInteraction:** provider key, task type, model ID, artifact references and safe usage metadata.
+- **CapabilityCatalogVersion:** immutable manifest revision defining project/platform/features marked supported, limited, docs-only or unsupported, and compatible generators, checks and delivery adapters.
 - **QualityProfile:** project, versioned baseline, risk classification, applicable checks, thresholds and approved exceptions.
 - **QualityCheckRun:** project/build/artifact version, profile version, runner/tool versions, environment, lifecycle state, timestamps and summary.
 - **QualityFinding:** check run, stable rule ID, severity, status, evidence reference, affected resource, remediation guidance and optional exception record.
@@ -87,6 +88,7 @@
 - A project has a versioned route; dependency edges define stage order.
 - User removal revokes future access but preserves audit history as required.
 - Provider credentials are encrypted and never returned to the client.
+- Project requirement/decision changes increment a revision; generated plans and artifacts record the exact input revision and capability manifest version.
 - Every state-changing request creates an activity event transactionally.
 
 ## 5. State machines and workflow rules
@@ -99,7 +101,7 @@ draft → active ↔ paused → completed → archived. Archived is read-only ex
 
 locked → ready → in_progress → in_review → approved.
 
-Additional transitions: in_review → changes_requested → in_progress; ready/in_progress → blocked; ready/in_progress → skipped only when allowed and with a reason. An approved stage may reopen by authorized action with a recorded reason. Dependent artifacts become stale and affected stages are flagged for review.
+Additional transitions: `in_review → changes_requested → in_progress`; `ready/in_progress → blocked → prior resumable state` after resolving the blocker; `ready → skipped` only when optional and route policy permits it, with a reason. An approved stage may reopen by authorized action with a recorded reason. Dependent artifacts become stale and affected stages are flagged for review. A route must be an acyclic dependency graph; validate this when accepting or revising a route.
 
 ### Approval policies
 
@@ -137,9 +139,32 @@ Maintain a decision ledger separately from requirements: user constraint, system
 Expose current supported code custody/export and deployment choices from capability registries, not from hardcoded AI claims. Each option includes supported status, prerequisites, ownership/access implications, portability, potential cost, required secrets, supported regions and next action. Never request provider credentials until the user selects that integration and starts connection.
 
 
+### Capability manifest and MVP scope
+
+The capability catalog is a versioned, deterministic manifest, not an AI-generated claim. Each project type/feature combination is one of: `supported`, `limited`, `docs_only`, `unsupported`. A supported entry names its validated input schema, page/component model, generator/template version, required quality checks, known limits, and available preview/export/deploy adapters. Include the manifest revision in the route, generated artifacts and quality reports.
+
+Initial automatic code generation is limited to responsive public websites assembled from vetted page templates: landing, portfolio, small business/professional site, event/product promo, and informational menu/catalog. Initial feature modules are content pages/navigation, responsive sections/media and contact/lead forms only through a configured supported handler. Native iOS/Android/desktop apps, payments, complex accounts, marketplaces and sensitive/high-risk workflows remain documentation/prototype/developer-handoff until a capability entry explicitly supports their complete generation and verification path.
+
+Unsupported feature requests still produce requirements, business logic, architecture, UX and implementation handoff. Do not create a fake functional button or mark an unsupported runtime feature complete. The UI must show the capability status and why code generation/deployment is unavailable.
+
+### Deterministic site model and AI-independent baseline
+
+Canonical generated content is a typed, versioned `SiteSpec`/page model composed from allowlisted page types, components, properties, interactions and feature modules. A deterministic renderer/compiler maps that model to the supported site package. AI may propose a schema-validated `SiteChangeSet`; deterministic validation checks references, allowed components, required inputs, route behavior and capability limits before applying it as a new candidate version. Never execute model-returned shell commands or accept arbitrary runtime code as if it had passed the typed model.
+
+When AI providers are unavailable, a user can still create supported sites by filling structured forms, choosing approved templates/components, editing content and configuring available modules. Existing requirements, review, quality, export and project continuation continue to work. For requests outside the deterministic builder's capability, explain the limit and create a developer handoff package instead of fabricating completion.
+
 ## 7. REST API
 
 All endpoints require authorization except health, registration/login and signed provider callbacks. Use typed DTOs, validation, pagination, idempotency keys for job creation and consistent problem responses.
+
+The list below is the endpoint inventory, not a substitute for schemas. The OpenAPI document at `apps/api/openapi.yaml` is the source of truth and must define every operation's request/response DTO, validation, authorization scope, side effects and error codes before that endpoint is implemented. Generate client types from it.
+
+- Success body: `{ data, meta? }`; `meta` may include request ID and cursor pagination fields.
+- Errors use RFC 9457 Problem Details with stable application `code`, `requestId` and field-level validation details; never return stack traces or secrets.
+- Collection endpoints use bounded cursor pagination; validate sort/filter fields against allowlists.
+- Job-creating mutations require an `Idempotency-Key`; retrying the same key and body returns the original job, and the same key with a different body is a conflict.
+- Every route documents required role/scope and whether it creates an audit event. OpenAPI schemas must not use untyped `any`/arbitrary JSON for domain inputs.
+
 
 ### Auth and account
 
@@ -172,7 +197,7 @@ All endpoints require authorization except health, registration/login and signed
 - GET /api/v1/projects/:projectId/requirements
 - PATCH /api/v1/projects/:projectId/requirements/:requirementId
 - POST /api/v1/projects/:projectId/requirements/:requirementId/confirm
-- GET /api/v1/projects/:projectId/route
+- GET /api/v1/capabilities?projectType=...\n- GET /api/v1/projects/:projectId/capabilities\n- GET /api/v1/projects/:projectId/route
 - POST /api/v1/projects/:projectId/route/proposals
 - POST /api/v1/projects/:projectId/route/accept
 - POST /api/v1/projects/:projectId/technical-plan/proposals
