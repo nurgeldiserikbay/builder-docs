@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8f7f4">
+  <meta name="description" content="BuildPath помогает пройти путь от идеи сайта или приложения до понятного ТЗ, готового кода и публикации — по вашим правилам и в удобном темпе.">
+  <title>BuildPath — от идеи до готового цифрового продукта</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17221e;
+      --muted: #65716b;
+      --paper: #f8f7f4;
+      --white: #fff;
+      --green: #c9ef79;
+      --green-deep: #46651c;
+      --line: #e5e7df;
+      --violet: #e9e5ff;
+      --shadow: 0 24px 70px rgba(36, 49, 42, .11);
+      --radius: 24px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--paper); color: var(--ink); line-height: 1.55; }
+    a { color: inherit; }
+    .wrap { width: min(1160px, calc(100% - 40px)); margin: 0 auto; }
+    .topbar { height: 76px; display:flex; align-items:center; justify-content:space-between; }
+    .brand { display:flex; gap:10px; align-items:center; font-weight:800; letter-spacing:-.04em; font-size:20px; text-decoration:none; }
+    .brandmark { width:32px; height:32px; display:grid; place-items:center; border-radius:11px; background:var(--green); color:#29400d; font-size:18px; }
+    .nav { display:flex; gap:28px; align-items:center; font-size:13px; color:#56615b; }
+    .nav a { text-decoration:none; }
+    .nav a:hover { color:var(--ink); }
+    .nav-cta, .button { display:inline-flex; align-items:center; justify-content:center; border:0; text-decoration:none; font:inherit; font-weight:700; border-radius:999px; padding:13px 19px; cursor:pointer; transition: transform .2s, background .2s; }
+    .nav-cta, .button-dark { color:white; background:var(--ink); }
+    .button-light { background:var(--green); color:#253315; }
+    .button:hover, .nav-cta:hover { transform:translateY(-2px); }
+    .hero { position:relative; overflow:hidden; border-radius:32px; padding:70px 7.2%; min-height:520px; background:#e7eddf; display:grid; grid-template-columns:1.05fr .95fr; align-items:center; gap:36px; }
+    .hero:before { content:""; position:absolute; width:470px; height:470px; border-radius:50%; background:rgba(201,239,121,.35); top:-230px; right:18%; }
+    .hero-copy, .hero-art { position:relative; z-index:1; }
+    .eyebrow { display:inline-flex; align-items:center; gap:8px; padding:7px 11px; border:1px solid rgba(38,63,24,.16); border-radius:999px; color:#456323; font-size:12px; font-weight:700; letter-spacing:.02em; }
+    .dot { width:7px; height:7px; border-radius:50%; background:#77a731; }
+    h1 { font-size:clamp(42px, 5.7vw, 70px); line-height:1.02; letter-spacing:-.065em; margin:22px 0 18px; max-width:620px; }
+    .hero-copy p { color:#536058; max-width:490px; font-size:17px; margin:0 0 27px; }
+    .actions { display:flex; flex-wrap:wrap; gap:11px; }
+    .micro { font-size:12px; color:#68746b; margin-top:18px; }
+    .hero-art { min-height:340px; display:grid; place-items:center; }
+    .journey-card { width:min(370px, 100%); padding:22px; background:#fff; border:1px solid rgba(23,34,30,.07); border-radius:24px; box-shadow:var(--shadow); transform:rotate(2deg); }
+    .card-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; }
+    .card-head strong { font-size:13px; }
+    .pill { font-size:10px; padding:5px 9px; border-radius:99px; background:#edf6dc; color:#557229; font-weight:700; }
+    .progress { height:6px; background:#eef0eb; border-radius:9px; overflow:hidden; margin-bottom:20px; }
+    .progress span { display:block; width:38%; height:100%; border-radius:9px; background:#a8d858; }
+    .journey-row { display:flex; gap:12px; align-items:flex-start; padding:11px 0; border-bottom:1px solid #f0f1ed; }
+    .journey-row:last-child { border-bottom:0; }
+    .check { flex:none; width:22px; height:22px; border-radius:50%; display:grid; place-items:center; background:#e8f5d4; color:#507127; font-size:12px; font-weight:800; }
+    .check.current { background:#1f2d25; color:white; }
+    .journey-row strong { display:block; font-size:12px; }
+    .journey-row small { display:block; color:#818a83; font-size:10px; margin-top:2px; }
+    .float-note { position:absolute; bottom:5px; right:-10px; padding:13px 16px; border-radius:16px; background:#242d29; color:#fff; font-size:11px; box-shadow:var(--shadow); transform:rotate(-4deg); }
+    .float-note b { color:var(--green); }
+    section { padding:92px 0; }
+    .section-kicker { color:#64812e; font-size:12px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; }
+    h2 { font-size:clamp(30px, 4vw, 48px); line-height:1.08; letter-spacing:-.05em; margin:13px 0 14px; }
+    .section-intro { max-width:640px; color:var(--muted); margin:0; font-size:16px; }
+    .center { text-align:center; }
+    .center .section-intro { margin:0 auto; }
+    .modes { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:37px; }
+    .mode { border:1px solid var(--line); border-radius:20px; background:white; padding:22px; min-height:206px; }
+    .mode-icon { display:grid; place-items:center; width:42px; height:42px; border-radius:14px; background:#f0f4e9; font-size:20px; margin-bottom:24px; }
+    .mode h3 { font-size:16px; letter-spacing:-.02em; margin:0 0 8px; }
+    .mode p { font-size:13px; line-height:1.5; color:var(--muted); margin:0; }
+    .route-section { background:#eef0e9; }
+    .route-grid { display:grid; grid-template-columns:.8fr 1.2fr; gap:70px; align-items:start; }
+    .route-grid .sticky { position:sticky; top:35px; }
+    .stage-list { display:grid; gap:10px; }
+    .stage { background:#fff; border:1px solid #e5e8df; border-radius:17px; display:grid; grid-template-columns:42px 1fr auto; gap:13px; align-items:center; padding:15px; }
+    .stage-num { width:38px; height:38px; display:grid; place-items:center; background:#f0f4e9; color:#57752b; font-weight:800; border-radius:12px; font-size:12px; }
+    .stage strong { display:block; font-size:14px; }
+    .stage small { display:block; color:#78827b; font-size:11px; margin-top:3px; }
+    .stage-tag { font-size:10px; color:#687268; white-space:nowrap; }
+    .route-note { margin-top:18px; padding:18px; border-radius:17px; background:#dfe8d3; color:#4e5e43; font-size:13px; }
+    .categories { display:grid; grid-template-columns:repeat(3, 1fr); gap:14px; margin-top:36px; }
+    .category { padding:24px; background:white; border:1px solid var(--line); border-radius:20px; }
+    .category h3 { font-size:16px; margin:0 0 12px; }
+    .chips { display:flex; flex-wrap:wrap; gap:7px; }
+    .chip { font-size:11px; color:#56625a; background:#f3f4ef; border-radius:99px; padding:6px 9px; }
+    .more { font-size:12px; color:#758077; margin:12px 0 0; }
+    .ai-band { padding:0 0 90px; }
+    .ai-box { border-radius:28px; background:#222c27; color:white; padding:44px 6%; display:grid; grid-template-columns:1fr 1fr; gap:46px; align-items:center; }
+    .ai-box h2 { margin-top:0; }
+    .ai-box p { color:#b8c1ba; margin:0; }
+    .ai-points { display:grid; gap:14px; }
+    .ai-point { display:flex; gap:12px; color:#dce2dd; font-size:13px; }
+    .ai-point i { font-style:normal; color:var(--green); font-weight:900; }
+    .promise { display:grid; grid-template-columns:repeat(3,1fr); gap:15px; margin-top:32px; }
+    .promise-item { padding:22px; border-left:2px solid #c4e687; background:#fbfbf8; }
+    .promise-item strong { display:block; font-size:14px; margin-bottom:6px; }
+    .promise-item span { color:var(--muted); font-size:12px; }
+    .final-cta { padding:68px 30px; text-align:center; border-radius:30px; background:#d9f09f; }
+    .final-cta h2 { max-width:660px; margin:0 auto 14px; }
+    .final-cta p { margin:0 auto 23px; color:#536043; max-width:540px; }
+    footer { padding:36px 0 42px; color:#738078; font-size:12px; }
+    .footer-row { border-top:1px solid var(--line); padding-top:24px; display:flex; justify-content:space-between; gap:20px; }
+    .footer-row a { text-decoration:none; }
+    @media (max-width: 850px) {
+      .nav { gap:16px; } .nav a:not(.nav-cta) { display:none; }
+      .hero { grid-template-columns:1fr; padding:54px 8%; gap:10px; }
+      .hero-art { min-height:300px; }
+      .modes { grid-template-columns:repeat(2,1fr); }
+      .route-grid { grid-template-columns:1fr; gap:30px; }
+      .route-grid .sticky { position:static; }
+      .categories { grid-template-columns:1fr 1fr; }
+      .ai-box { grid-template-columns:1fr; gap:25px; }
+    }
+    @media (max-width: 540px) {
+      .wrap { width:min(100% - 28px, 1160px); }
+      .topbar { height:66px; }
+      .brand { font-size:18px; }
+      .nav-cta { padding:10px 13px; font-size:12px; }
+      .hero { border-radius:23px; min-height:0; padding:42px 23px 28px; }
+      h1 { font-size:43px; }
+      .hero-copy p { font-size:15px; }
+      .hero-art { min-height:270px; }
+      .journey-card { padding:18px; }
+      .float-note { right:-3px; }
+      section { padding:68px 0; }
+      .modes { gap:9px; }
+      .mode { padding:16px; min-height:190px; }
+      .mode-icon { margin-bottom:18px; }
+      .categories { grid-template-columns:1fr; }
+      .stage { grid-template-columns:36px 1fr; gap:10px; }
+      .stage-tag { grid-column:2; }
+      .ai-band { padding-bottom:68px; }
+      .ai-box { padding:30px 22px; border-radius:23px; }
+      .promise { grid-template-columns:1fr; gap:9px; }
+      .final-cta { padding:45px 20px; border-radius:23px; }
+      .footer-row { flex-direction:column; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior:auto; }
+      *, *:before, *:after { transition:none !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="wrap topbar">
+    <a class="brand" href="#" aria-label="BuildPath, главная">
+      <span class="brandmark" aria-hidden="true">↗</span> BuildPath
+    </a>
+    <nav class="nav" aria-label="Основная навигация">
+      <a href="#how">Как это работает</a>
+      <a href="#projects">Типы проектов</a>
+      <a href="#principles">Подход</a>
+      <a class="nav-cta" href="#how">Посмотреть путь <span aria-hidden="true">↗</span></a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="wrap">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <span class="eyebrow"><span class="dot"></span> Разработка, понятная каждому</span>
+          <h1 id="hero-title">От идеи — к продукту, который работает.</h1>
+          <p>Создайте сайт или приложение шаг за шагом. Поймите, что нужно решить, выберите свой маршрут и получите результат, который можно развивать дальше.</p>
+          <div class="actions">
+            <a class="button button-dark" href="#how">Узнать, как это работает <span aria-hidden="true">&nbsp;↗</span></a>
+            <a class="button button-light" href="docs/product-blueprint.md">Изучить концепцию</a>
+          </div>
+          <div class="micro">Можно начать с нуля, прийти с макетом или доработать существующий проект.</div>
+        </div>
+        <div class="hero-art" aria-label="Пример пошагового рабочего пространства">
+          <div class="journey-card">
+            <div class="card-head"><strong>Ваш проект · Запись клиентов</strong><span class="pill">В работе</span></div>
+            <div class="progress"><span></span></div>
+            <div class="journey-row"><span class="check">✓</span><div><strong>Определить цель</strong><small>Кому и зачем нужен продукт</small></div></div>
+            <div class="journey-row"><span class="check current">2</span><div><strong>Продумать сценарии</strong><small>Что происходит при записи и отмене</small></div></div>
+            <div class="journey-row"><span class="check">3</span><div><strong>Выбрать решение</strong><small>Сайт, приложение или оба варианта</small></div></div>
+            <div class="journey-row"><span class="check">4</span><div><strong>Создать и проверить</strong><small>Код, тесты и запуск</small></div></div>
+          </div>
+          <div class="float-note"><b>Понятный шаг.</b><br>Видимый результат.</div>
+        </div>
+      </section>
+    </div>
+
+    <section class="wrap" id="how">
+      <div class="center">
+        <span class="section-kicker">Ваш проект, ваш маршрут</span>
+        <h2>Не нужно знать, с чего начать</h2>
+        <p class="section-intro">Опишите задачу своими словами. BuildPath поможет определить тип проекта, задаст вопросы и составит подходящий план — без лишних технических терминов.</p>
+      </div>
+      <div class="modes">
+        <article class="mode"><div class="mode-icon" aria-hidden="true">✦</div><h3>Есть только идея</h3><p>Пройдите короткий опрос или поговорите в чате. Вместе превратите задумку в ясную цель.</p></article>
+        <article class="mode"><div class="mode-icon" aria-hidden="true">↗</div><h3>Нужен конкретный этап</h3><p>Получите ТЗ, бизнес-логику, дизайн, код или план запуска — остановитесь, когда будет достаточно.</p></article>
+        <article class="mode"><div class="mode-icon" aria-hidden="true">▧</div><h3>Уже есть макет</h3><p>Принесите дизайн и определите, что нужно реализовать, для каких устройств и с какими состояниями.</p></article>
+        <article class="mode"><div class="mode-icon" aria-hidden="true">⟳</div><h3>Есть работающий проект</h3><p>Начните с доработки. Зафиксируйте текущее поведение и выберите, что изменить или улучшить.</p></article>
+      </div>
+    </section>
+
+    <section class="route-section" id="stages">
+      <div class="wrap route-grid">
+        <div class="sticky">
+          <span class="section-kicker">Путь проекта</span>
+          <h2>Каждый этап ведёт к результату</h2>
+          <p class="section-intro">На каждом шаге понятно, зачем он нужен, что предстоит выбрать и какой материал вы получите. Можно пройти весь цикл или остановиться на готовом ТЗ.</p>
+          <div class="route-note">Маршрут подстраивается под задачу. Например, простому лендингу не нужен сложный сервер, а продукту с заказами и аккаунтами заранее нужны правила доступа и статусы.</div>
+        </div>
+        <div class="stage-list" aria-label="Этапы создания продукта">
+          <div class="stage"><span class="stage-num">01</span><div><strong>Цель и тип проекта</strong><small>Понимаем, для кого и зачем он создаётся</small></div><span class="stage-tag">Старт</span></div>
+          <div class="stage"><span class="stage-num">02</span><div><strong>Требования и ограничения</strong><small>Функции, аудитория, платформы и приоритеты</small></div><span class="stage-tag">Основа</span></div>
+          <div class="stage"><span class="stage-num">03</span><div><strong>Бизнес-логика</strong><small>Роли, сценарии, правила и исключения</small></div><span class="stage-tag">По задаче</span></div>
+          <div class="stage"><span class="stage-num">04</span><div><strong>ТЗ и структура</strong><small>Страницы, потоки и критерии результата</small></div><span class="stage-tag">Документ</span></div>
+          <div class="stage"><span class="stage-num">05</span><div><strong>UX и визуальный дизайн</strong><small>Прототип, макеты и состояния интерфейса</small></div><span class="stage-tag">По выбору</span></div>
+          <div class="stage"><span class="stage-num">06</span><div><strong>Технологии и план</strong><small>Объяснённый стек и порядок реализации</small></div><span class="stage-tag">Решение</span></div>
+          <div class="stage"><span class="stage-num">07</span><div><strong>Реализация и проверки</strong><small>Код, тестирование и устранение проблем</small></div><span class="stage-tag">Создание</span></div>
+          <div class="stage"><span class="stage-num">08</span><div><strong>Запуск и передача</strong><small>Публикация, архив, Git и инструкции</small></div><span class="stage-tag">Финиш</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap" id="projects">
+      <div>
+        <span class="section-kicker">От простого сайта до сложного сервиса</span>
+        <h2>Выберите направление. Детали уточним вместе.</h2>
+        <p class="section-intro">Каталог помогает сориентироваться, но не ограничивает идею: можно объединить несколько типов или описать свой вариант.</p>
+      </div>
+      <div class="categories">
+        <article class="category"><h3>Сайты и страницы</h3><div class="chips"><span class="chip">Лендинг</span><span class="chip">Сайт компании</span><span class="chip">Портфолио</span><span class="chip">Блог</span><span class="chip">Документация</span><span class="chip">Портал</span></div><p class="more">Для презентации, контента и информации</p></article>
+        <article class="category"><h3>Торговля и услуги</h3><div class="chips"><span class="chip">Магазин</span><span class="chip">Маркетплейс</span><span class="chip">Запись</span><span class="chip">Бронирование</span><span class="chip">Доставка</span><span class="chip">Объявления</span></div><p class="more">Для заявок, заказов, расписаний и оплат</p></article>
+        <article class="category"><h3>Рабочие инструменты</h3><div class="chips"><span class="chip">Личный кабинет</span><span class="chip">Админ-панель</span><span class="chip">Аналитика</span><span class="chip">CRM</span><span class="chip">Внутренний портал</span></div><p class="more">Для командных процессов и управления данными</p></article>
+        <article class="category"><h3>Мобильные приложения</h3><div class="chips"><span class="chip">iOS</span><span class="chip">Android</span><span class="chip">Кроссплатформенное</span><span class="chip">PWA</span></div><p class="more">Для телефонов, планшетов и установки из магазина</p></article>
+        <article class="category"><h3>Обучение и сообщества</h3><div class="chips"><span class="chip">Онлайн-курс</span><span class="chip">LMS</span><span class="chip">Форум</span><span class="chip">Сообщество</span><span class="chip">События</span></div><p class="more">Для обучения, участников и совместной работы</p></article>
+        <article class="category"><h3>Другие цифровые продукты</h3><div class="chips"><span class="chip">Игра</span><span class="chip">API</span><span class="chip">Расширение</span><span class="chip">Настольное приложение</span><span class="chip">Интеграция</span></div><p class="more">Для нестандартных идей и комбинированных решений</p></article>
+      </div>
+    </section>
+
+    <section class="ai-band" id="principles">
+      <div class="wrap">
+        <div class="ai-box">
+          <div><span class="section-kicker">ИИ — помощник, а не чёрный ящик</span><h2>Вы понимаете, что происходит</h2><p>ИИ может помочь сформулировать требования и подготовить черновики. Но ход проекта держится на понятных правилах, сохранённых решениях и проверяемых результатах.</p></div>
+          <div class="ai-points">
+            <div class="ai-point"><i>✓</i><span>Решения сохраняются в документах и материалах проекта.</span></div>
+            <div class="ai-point"><i>✓</i><span>Важные выборы объясняются; пользователь остаётся автором решения.</span></div>
+            <div class="ai-point"><i>✓</i><span>Проект можно передать разработчику или продолжить позже.</span></div>
+            <div class="ai-point"><i>✓</i><span>Качество подтверждается проверками, а не обещанием генерации.</span></div>
+          </div>
+        </div>
+        <div class="promise">
+          <div class="promise-item"><strong>Остановиться в любой момент</strong><span>ТЗ, макеты и архитектура — полноценные результаты, даже без генерации кода.</span></div>
+          <div class="promise-item"><strong>Выбирать технологии осознанно</strong><span>Сравниваем несколько подходящих вариантов простым языком.</span></div>
+          <div class="promise-item"><strong>Сохранить путь проекта</strong><span>Материалы, принятые решения и следующий шаг остаются вместе.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap">
+      <div class="final-cta">
+        <span class="section-kicker">Начните с того, что уже знаете</span>
+        <h2>Идея, макет или список проблем — этого достаточно для старта.</h2>
+        <p>Опишите, что хотите получить. Дальше проект можно разложить на понятные этапы и двигаться в удобном темпе.</p>
+        <a class="button button-dark" href="docs/product-blueprint.md">Посмотреть полную концепцию <span aria-hidden="true">&nbsp;↗</span></a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="wrap">
+    <div class="footer-row">
+      <span>© BuildPath · Рабочее название проекта</span>
+      <span><a href="docs/product-blueprint.md">Продуктовая концепция</a> · Страница описывает проектируемый продукт</span>
+    </div>
+  </footer>
+</body>
+</html>
