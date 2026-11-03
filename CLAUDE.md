@@ -21,7 +21,7 @@ A person with a phone and internet connection can describe a website or applicat
 - Use the specified Next.js, NestJS, PostgreSQL, Redis/BullMQ, object storage and isolated-worker baseline unless repository evidence justifies a documented adjustment.
 - Implement complete vertical slices; avoid placeholder buttons, fake progress and API-only stubs.
 - Keep workflow state, permissions, approvals, readiness and audit events deterministic and server-authoritative.
-- Treat AI output as a validated proposal. Get user confirmation before changing requirements, code or a live deployment.
+- Treat AI output as an untrusted proposal and validate it deterministically. A user's explicit create/revise request may generate a candidate code version for isolated checks and preview; do not silently change confirmed requirements, connect external accounts, incur charges, hand off code or deploy to production without separate user confirmation.
 - Keep all core views mobile-first and explain each question, option, warning and next action in context.
 - Accept product requirements and business logic as sufficient input; treat a user-provided technical specification or stack preference as optional. Build the technical plan from confirmed requirements, and ask the user to choose only for decisions with material cost, ownership, access, portability, integration or deployment consequences.
 - Do not execute uploaded or generated code in API/web processes; use the isolation model in the technical specification.
