@@ -55,7 +55,7 @@
 - **Project:** workspace, owner, название, summary, тип, режим старта, статус, locale, active stage, timestamps.
 - **ProjectMember:** project, user, project role, status.
 - **StageDefinition:** версия шаблона этапа, правила входа/выхода, допустимые зависимости.
-- **ProjectStage:** project, stage definition/version, dependencies, order, status, required flag, checklist, review policy, assignee.
+- **ProjectStage:** project, stage definition/version, dependencies, order, status, required flag, checklist, review policy, assignee, blocked reason and resume state.
 - **StageMember:** участник и stage-level role.
 - **Requirement:** category, title, text, priority, status (`proposed`, `confirmed`, `assumption`, `open_question`, `rejected`), source type/reference, author, `confirmedBy/At`, `supersedesId`, timestamps. Only confirmed requirements drive generation; assumptions must remain visible.
 - **Decision:** category (product/technology/code-storage/deployment/integration/operations), вопрос и простой summary влияния, варианты, recommended option + rationale, выбранная опция, status (proposed/accepted/rejected/deferred), `requires_explicit_confirmation`, provenance, связанный этап и actor/timestamp.
@@ -95,7 +95,11 @@
 
 ### Project states
 
-draft → active ↔ paused → completed → archived. Archived is read-only except export/deletion. Completing requires all required stages to be approved or explicitly waived when the route allows it.
+- `draft → active` when the owner starts the guided project.
+- `active ↔ paused`; pause is allowed from any nonterminal state and resume returns the project to active while preserving each stage's prior state.
+- `active → completed` only when the chosen stopping outcome is satisfied and all required stages for that outcome are approved or explicitly waived where the route permits it.
+- `completed → archived`; archived is read-only except authorized export/deletion.
+- Reopening a completed project requires owner/admin permission, a reason and a new route revision. Archived projects must be restored before resuming work.
 
 ### Stage states
 
@@ -197,7 +201,9 @@ The list below is the endpoint inventory, not a substitute for schemas. The Open
 - GET /api/v1/projects/:projectId/requirements
 - PATCH /api/v1/projects/:projectId/requirements/:requirementId
 - POST /api/v1/projects/:projectId/requirements/:requirementId/confirm
-- GET /api/v1/capabilities?projectType=...\n- GET /api/v1/projects/:projectId/capabilities\n- GET /api/v1/projects/:projectId/route
+- GET /api/v1/capabilities?projectType=...
+- GET /api/v1/projects/:projectId/capabilities
+- GET /api/v1/projects/:projectId/route
 - POST /api/v1/projects/:projectId/route/proposals
 - POST /api/v1/projects/:projectId/route/accept
 - POST /api/v1/projects/:projectId/technical-plan/proposals
