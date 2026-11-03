@@ -58,7 +58,7 @@
 - **ProjectStage:** project, stage definition/version, dependencies, order, status, required flag, checklist, review policy, assignee.
 - **StageMember:** участник и stage-level role.
 - **Requirement:** category, title, text, priority, status, source type/reference, author, timestamps.
-- **Decision:** вопрос, варианты, выбранная опция, rationale, статус, ссылка на этап.
+- **Decision:** category (product/technology/code-storage/deployment/integration/operations), вопрос и простой summary влияния, варианты, recommended option + rationale, выбранная опция, status (proposed/accepted/rejected/deferred), `requires_explicit_confirmation`, provenance, связанный этап и actor/timestamp.
 - **Artifact:** stage, тип, заголовок, ссылка на current version, visibility.
 - **ArtifactVersion:** immutable object reference, номер, checksum, creator, source, metadata.
 - **CommentThread и Comment:** stage/artifact version, parent, author, state, timestamps.
@@ -118,13 +118,24 @@ Return structured data: required stages approved/total, omitted optional stages,
 
 ## 6. Guided discovery and AI boundary
 
-Define typed AI tasks: intake extraction, follow-up suggestions, type recommendation, requirement draft, option comparison, site plan, site generation/change proposal and review summary.
+Define typed AI tasks: intake extraction, follow-up suggestions, type recommendation, requirement/business-rule draft, option comparison, technical-plan proposal, site generation/change proposal and review summary.
 
 Every AI response is schema-validated and length-limited. Invalid output may be retried once, then surfaced as a recoverable error. Provider failures do not mutate project state.
 
 AI cannot confirm requirements, change permissions, approve a stage, skip required checks, access provider credentials or publish. AI returns a proposal/diff. An authorized user explicitly accepts changes. Forms and manually entered structured data remain available if the provider is unavailable.
 
 For each requirement, preserve provenance: user answer, imported material, deterministic validation or AI proposal. Keep confirmed requirements distinct from assumptions and open questions.
+
+### Product intent and implementation decision policy
+
+Treat the user's goal, audience, business rules and explicit constraints as the source of truth. A user may provide an existing technical specification, upload it or state preferred technologies; this is optional. When absent, derive an implementation plan from the confirmed requirements and supported platform capabilities.
+
+Classify each implementation decision by impact. Low-impact, reversible technical details may use the supported recommended default and be recorded for transparency. Decisions with material consequences (recurring charges, provider account/credential, public exposure, data/control ownership, portability, external integration, or irreversible action) must be presented as plain-language options with tradeoffs, recommendation and an explicit user choice. If the user delegates the choice, follow their stored preferences and recommendation policy; still require confirmation before billing, connecting an account, granting external access or publishing to production.
+
+Maintain a decision ledger separately from requirements: user constraint, system proposal, recommendation, chosen option, deferral and exception must be distinguishable. The deterministic workflow engine stores and enforces decisions; AI may explain or propose but cannot commit one. If a constraint conflicts with security, supported deployment capabilities or another requirement, surface the conflict and alternatives rather than silently overriding it.
+
+Expose current supported code custody/export and deployment choices from capability registries, not from hardcoded AI claims. Each option includes supported status, prerequisites, ownership/access implications, portability, potential cost, required secrets, supported regions and next action. Never request provider credentials until the user selects that integration and starts connection.
+
 
 ## 7. REST API
 
@@ -164,6 +175,11 @@ All endpoints require authorization except health, registration/login and signed
 - GET /api/v1/projects/:projectId/route
 - POST /api/v1/projects/:projectId/route/proposals
 - POST /api/v1/projects/:projectId/route/accept
+- POST /api/v1/projects/:projectId/technical-plan/proposals
+- GET /api/v1/projects/:projectId/technical-plan
+- GET /api/v1/projects/:projectId/decisions
+- POST /api/v1/projects/:projectId/decisions/:decisionId/resolve
+- GET /api/v1/projects/:projectId/delivery-options (code custody/export and deployment capabilities with prerequisites)
 
 ### Stages and reviews
 
