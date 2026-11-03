@@ -52,7 +52,7 @@
 - **User:** email, имя, locale, verified state, timestamps.
 - **Workspace:** owner, название, план/лимиты, настройки.
 - **WorkspaceMember:** user, роль, приглашение, статус.
-- **Project:** workspace, owner, название, summary, тип, режим старта, статус, locale, active stage, timestamps.
+- **Project:** workspace, owner, название, summary, тип, режим старта, status, `resumeState` для паузы, locale, active stage, выбранный stopping outcome, timestamps.
 - **ProjectMember:** project, user, project role, status.
 - **StageDefinition:** версия шаблона этапа, правила входа/выхода, допустимые зависимости.
 - **ProjectStage:** project, stage definition/version, dependencies, order, status, required flag, checklist, review policy, assignee, blocked reason and resume state.
@@ -96,10 +96,10 @@
 ### Project states
 
 - `draft → active` when the owner starts the guided project.
-- `active ↔ paused`; pause is allowed from any nonterminal state and resume returns the project to active while preserving each stage's prior state.
+- Any nonterminal state (`draft` or `active`) may transition to `paused`, saving `resumeState`; `paused → resumeState` restores the previous project state and preserves each stage's prior state.
 - `active → completed` only when the chosen stopping outcome is satisfied and all required stages for that outcome are approved or explicitly waived where the route permits it.
-- `completed → archived`; archived is read-only except authorized export/deletion.
-- Reopening a completed project requires owner/admin permission, a reason and a new route revision. Archived projects must be restored before resuming work.
+- `completed → archived`; archived is read-only except authorized export/deletion. Restore returns to `completed`; resuming work then requires the reopen flow.
+- Reopening a completed project requires owner/admin permission, a reason and a new route revision.
 
 ### Stage states
 
