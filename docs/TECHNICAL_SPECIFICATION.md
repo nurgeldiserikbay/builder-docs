@@ -59,6 +59,7 @@
 - **StageMember:** участник и stage-level role.
 - **Requirement:** category, title, text, priority, status (`proposed`, `confirmed`, `assumption`, `open_question`, `rejected`), source type/reference, author, `confirmedBy/At`, `supersedesId`, timestamps. Only confirmed requirements drive generation; assumptions must remain visible.
 - **Decision:** category (product/technology/code-storage/deployment/integration/operations), вопрос и простой summary влияния, варианты, recommended option + rationale, выбранная опция, status (proposed/accepted/rejected/deferred), `requires_explicit_confirmation`, provenance, связанный этап и actor/timestamp.
+- **DecisionPreference:** user/project scope, categories/providers/options the user prefers, disallowed options, applicable limits and expiry/revocation. A preference helps choose defaults; it never authorizes charging, external account access, code handoff or production deployment.
 - **Artifact:** stage, тип, заголовок, ссылка на current version, visibility.
 - **ArtifactVersion:** immutable object reference, version number, checksum, creator, source, metadata. A generated `SiteSpec`/page model is stored as a typed artifact version and names its schema and capability-manifest versions.
 - **CommentThread и Comment:** stage/artifact version, parent, author, state, timestamps.
@@ -89,6 +90,7 @@
 - User removal revokes future access but preserves audit history as required.
 - Provider credentials are encrypted and never returned to the client.
 - Project requirement/decision changes increment a revision; generated plans and artifacts record the exact input revision and capability manifest version.
+- Decision preferences can only narrow supported options and steer defaults; product safety policy and explicit confirmations for external side effects always take precedence.
 - Every state-changing request creates an activity event transactionally.
 
 ## 5. State machines and workflow rules
@@ -217,6 +219,8 @@ The list below is the endpoint inventory, not a substitute for schemas. The Open
 - POST /api/v1/projects/:projectId/technical-plan/proposals
 - GET /api/v1/projects/:projectId/technical-plan
 - GET /api/v1/projects/:projectId/decisions
+- GET /api/v1/projects/:projectId/decision-preferences
+- PATCH /api/v1/projects/:projectId/decision-preferences
 - POST /api/v1/projects/:projectId/decisions/:decisionId/resolve
 - GET /api/v1/projects/:projectId/delivery-options (code custody/export and deployment capabilities with prerequisites)
 
