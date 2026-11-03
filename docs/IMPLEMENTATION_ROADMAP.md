@@ -86,7 +86,7 @@
 
 ## Договор для Claude Code
 
-1. Перед началом прочитать корневой CLAUDE.md, PRODUCT_REQUIREMENTS.md, ARCHITECTURE_AND_BUSINESS_LOGIC.md, TECHNICAL_SPECIFICATION.md и этот roadmap. Product blueprint использовать только как дополнительный справочник.
+1. Перед началом прочитать корневой CLAUDE.md, docs/PRODUCT_REQUIREMENTS.md, docs/ARCHITECTURE_AND_BUSINESS_LOGIC.md, docs/TECHNICAL_SPECIFICATION.md и docs/IMPLEMENTATION_ROADMAP.md. docs/product-blueprint.md использовать только как дополнительный справочник.
 2. Проверить код и фактическое состояние текущей ветки прежде, чем выбирать архитектуру.
 3. Реализовать связный вертикальный сценарий на каждом этапе, не ограничиваться scaffolding или фиктивными кнопками.
 4. Запускать проверки, предусмотренные проектом, и исправлять регрессии, внесённые изменениями.
