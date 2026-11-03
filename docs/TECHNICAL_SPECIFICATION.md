@@ -122,7 +122,7 @@ Define typed AI tasks: intake extraction, follow-up suggestions, type recommenda
 
 Every AI response is schema-validated and length-limited. Invalid output may be retried once, then surfaced as a recoverable error. Provider failures do not mutate project state.
 
-AI cannot confirm requirements, change permissions, approve a stage, skip required checks, access provider credentials or publish. AI returns a proposal/diff. An authorized user explicitly accepts changes. Forms and manually entered structured data remain available if the provider is unavailable.
+AI cannot confirm requirements, change permissions, approve a stage, skip required checks, access provider credentials or publish. A user's explicit create/revise request authorizes generating a candidate artifact/code version for isolated validation and preview against the accepted requirements; it does not authorize changing confirmed requirements or making external changes. AI returns a typed proposal/change set; deterministic validators and project policy decide whether it can become a preview candidate. No per-library/framework approval is required when it follows the agreed technical plan. External account connection, paid action, code handoff and production deployment always require separate user confirmation. Forms and manually entered structured data remain available if the provider is unavailable.
 
 For each requirement, preserve provenance: user answer, imported material, deterministic validation or AI proposal. Keep confirmed requirements distinct from assumptions and open questions.
 
