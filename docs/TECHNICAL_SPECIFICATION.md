@@ -60,7 +60,7 @@
 - **Requirement:** category, title, text, priority, status (`proposed`, `confirmed`, `assumption`, `open_question`, `rejected`), source type/reference, author, `confirmedBy/At`, `supersedesId`, timestamps. Only confirmed requirements drive generation; assumptions must remain visible.
 - **Decision:** category (product/technology/code-storage/deployment/integration/operations), вопрос и простой summary влияния, варианты, recommended option + rationale, выбранная опция, status (proposed/accepted/rejected/deferred), `requires_explicit_confirmation`, provenance, связанный этап и actor/timestamp.
 - **Artifact:** stage, тип, заголовок, ссылка на current version, visibility.
-- **ArtifactVersion:** immutable object reference, номер, checksum, creator, source, metadata.
+- **ArtifactVersion:** immutable object reference, version number, checksum, creator, source, metadata. A generated `SiteSpec`/page model is stored as a typed artifact version and names its schema and capability-manifest versions.
 - **CommentThread и Comment:** stage/artifact version, parent, author, state, timestamps.
 - **ReviewRequest:** конкретная версия артефакта, snapshot policy/reviewers, status.
 - **Approval:** review request, reviewer, decision, comment, exact artifact version, timestamp.
@@ -114,7 +114,7 @@ Additional transitions: `in_review → changes_requested → in_progress`; `read
 - QUORUM with required count
 - NAMED_APPROVERS with explicit member IDs
 
-Validate eligible reviewers before starting a review. A separation-of-duties rule may prohibit contributors from approving their own submitted version. If the policy or membership changes during active review, cancel and reissue the review explicitly.
+Validate eligible reviewers before starting a review. By default, an author cannot approve their own submitted version; a project policy may relax this only through an explicit owner choice and an audit record. If the policy or membership changes during active review, cancel and reissue the review explicitly.
 
 The stage approval transition is transactional: validate required artifacts and checklist, no open blocking comments, approval threshold met, then save approved state and activity event. Handoff is either automatic under the configured rule or requires a separate authorized action.
 
@@ -178,11 +178,15 @@ The list below is the endpoint inventory, not a substitute for schemas. The Open
 - POST /api/v1/auth/verify-email
 - POST /api/v1/auth/password/reset
 - GET /api/v1/me
+- POST /api/v1/me/exports
+- POST /api/v1/me/deletion-requests
 
 ### Workspaces and projects
 
 - POST /api/v1/workspaces
 - GET /api/v1/workspaces/:workspaceId
+- GET /api/v1/workspaces/:workspaceId/members
+- PATCH /api/v1/workspaces/:workspaceId/members/:memberId/role
 - POST /api/v1/workspaces/:workspaceId/invitations
 - POST /api/v1/invitations/:token/accept
 - POST /api/v1/projects
@@ -193,6 +197,10 @@ The list below is the endpoint inventory, not a substitute for schemas. The Open
 - POST /api/v1/projects/:projectId/resume
 - POST /api/v1/projects/:projectId/members
 - DELETE /api/v1/projects/:projectId/members/:memberId
+- POST /api/v1/workspaces/:workspaceId/connections/:provider/authorization
+- GET /api/v1/workspaces/:workspaceId/connections
+- DELETE /api/v1/workspaces/:workspaceId/connections/:connectionId
+- POST /api/v1/webhooks/providers/:provider
 
 ### Intake and requirements
 
@@ -216,7 +224,8 @@ The list below is the endpoint inventory, not a substitute for schemas. The Open
 
 - GET /api/v1/projects/:projectId/stages
 - GET /api/v1/projects/:projectId/stages/:stageId
-- PATCH /api/v1/projects/:projectId/stages/:stageId
+- PATCH /api/v1/projects/:projectId/stages/:stageId (metadata only; never directly changes workflow state)
+- POST /api/v1/projects/:projectId/stages/:stageId/transitions (validated command for start, block, submit, reopen, skip or handoff)
 - POST /api/v1/projects/:projectId/stages/:stageId/assignments
 - POST /api/v1/projects/:projectId/stages/:stageId/review-requests
 - POST /api/v1/review-requests/:reviewId/decisions
