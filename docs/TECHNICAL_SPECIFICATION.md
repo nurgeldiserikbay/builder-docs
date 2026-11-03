@@ -151,6 +151,8 @@ The capability catalog is a versioned, deterministic manifest, not an AI-generat
 
 Initial automatic code generation is limited to responsive public websites assembled from vetted page templates: landing, portfolio, small business/professional site, event/product promo, and informational menu/catalog. Initial feature modules are content pages/navigation, responsive sections/media and contact/lead forms only through a configured supported handler. Native iOS/Android/desktop apps, payments, complex accounts, marketplaces and sensitive/high-risk workflows remain documentation/prototype/developer-handoff until a capability entry explicitly supports their complete generation and verification path.
 
+The stack in section 1 is the stack used to build the BuildPath platform; it is not inherited automatically by customer projects. The first generated-site profile emits a static-first Next.js App Router + TypeScript project from the versioned SiteSpec. It does not add a customer backend/database unless a supported feature profile requires one. If a customer-provided stack is not in the verified generator manifest, preserve it as a requirement and offer a developer handoff or an explicit switch to a supported generator; never silently claim or substitute stack compliance.
+
 Unsupported feature requests still produce requirements, business logic, architecture, UX and implementation handoff. Do not create a fake functional button or mark an unsupported runtime feature complete. The UI must show the capability status and why code generation/deployment is unavailable.
 
 ### Deterministic site model and AI-independent baseline
