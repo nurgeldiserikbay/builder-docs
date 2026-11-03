@@ -5,9 +5,10 @@ Implement the product from the normative specifications below. Do not treat the 
 ## Read in this order
 
 1. docs/PRODUCT_REQUIREMENTS.md
-2. docs/TECHNICAL_SPECIFICATION.md
-3. docs/IMPLEMENTATION_ROADMAP.md
-4. docs/product-blueprint.md
+2. docs/ARCHITECTURE_AND_BUSINESS_LOGIC.md
+3. docs/TECHNICAL_SPECIFICATION.md
+4. docs/IMPLEMENTATION_ROADMAP.md
+5. docs/product-blueprint.md
 
 The product requirements define user-visible behavior. The technical specification defines the baseline architecture and safety boundaries. The roadmap defines delivery order. If two documents conflict, prefer the more specific requirement, record the conflict in a decision note and do not silently remove a user capability.
 
