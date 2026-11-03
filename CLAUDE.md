@@ -10,7 +10,7 @@ Implement the product from the normative specifications below. Do not treat the 
 4. docs/IMPLEMENTATION_ROADMAP.md
 5. docs/product-blueprint.md
 
-The product requirements define user-visible behavior. The technical specification defines the baseline architecture and safety boundaries. The roadmap defines delivery order. If two documents conflict, prefer the more specific requirement, record the conflict in a decision note and do not silently remove a user capability.
+Authority order: PRODUCT_REQUIREMENTS.md defines user-visible behavior and acceptance; TECHNICAL_SPECIFICATION.md is the implementation contract for architecture, APIs, data, security and operations, provided it preserves the product requirements; ARCHITECTURE_AND_BUSINESS_LOGIC.md is a schematic map and must stay consistent with those two; IMPLEMENTATION_ROADMAP.md defines delivery order; product-blueprint.md is supplementary only and is not normative. If the product requirements and technical contract conflict, do not guess: record the conflict, align the docs and then implement. Never let a schematic or legacy concept silently override a concrete requirement.
 
 ## Product outcome
 
