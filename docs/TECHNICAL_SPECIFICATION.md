@@ -225,7 +225,7 @@ The list below is the endpoint inventory, not a substitute for schemas. The Open
 - GET /api/v1/projects/:projectId/stages
 - GET /api/v1/projects/:projectId/stages/:stageId
 - PATCH /api/v1/projects/:projectId/stages/:stageId (metadata only; never directly changes workflow state)
-- POST /api/v1/projects/:projectId/stages/:stageId/transitions (validated command for start, block, submit, reopen, skip or handoff)
+- POST /api/v1/projects/:projectId/stages/:stageId/transitions (validated start, block/unblock, reopen or permitted-skip command; review submission and decisions use their dedicated endpoints, and handoff remains a separate operation)
 - POST /api/v1/projects/:projectId/stages/:stageId/assignments
 - POST /api/v1/projects/:projectId/stages/:stageId/review-requests
 - POST /api/v1/review-requests/:reviewId/decisions
