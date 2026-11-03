@@ -189,7 +189,13 @@ All endpoints require authorization except health, registration/login and signed
 - POST /api/v1/projects/:projectId/previews
 - POST /api/v1/projects/:projectId/deployments
 - GET /api/v1/deployments/:deploymentId
-- GET /api/v1/projects/:projectId/quality/profile\n- PATCH /api/v1/projects/:projectId/quality/profile (authorized, audited exceptions only)\n- POST /api/v1/projects/:projectId/quality/check-runs\n- GET /api/v1/projects/:projectId/quality/check-runs/:runId\n- GET /api/v1/projects/:projectId/quality/findings\n- POST /api/v1/projects/:projectId/quality/findings/:findingId/exceptions\n- POST /api/v1/projects/:projectId/exports
+- GET /api/v1/projects/:projectId/quality/profile
+- PATCH /api/v1/projects/:projectId/quality/profile (authorized, audited exceptions only)
+- POST /api/v1/projects/:projectId/quality/check-runs
+- GET /api/v1/projects/:projectId/quality/check-runs/:runId
+- GET /api/v1/projects/:projectId/quality/findings
+- POST /api/v1/projects/:projectId/quality/findings/:findingId/exceptions
+- POST /api/v1/projects/:projectId/exports
 
 ### Telegram and notifications
 
