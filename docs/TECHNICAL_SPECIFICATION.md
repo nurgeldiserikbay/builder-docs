@@ -281,10 +281,12 @@ The concrete DTOs and response schemas are the OpenAPI contracts; arbitrary unty
 - Use secure, HTTP-only, SameSite browser cookies and CSRF protection for mutations.
 - Hash passwords with a modern adaptive password hash, or use a verified passwordless flow. Verify email before provider connections.
 - Check tenant, project and stage permissions on every API operation; the UI is not an authorization boundary.
+- Authorization is deny-by-default and object-scoped: active account + project membership/delegated project access + stage scope + action permission. Workspace membership or ownership alone does not reveal private project contents; stage membership cannot grant workspace/admin powers. Use the permission matrix in PRODUCT_REQUIREMENTS.md as the policy source.
 - Telegram link token is random, single-use, hashed at rest, short-lived and revocable.
 - Validate Telegram webhook secret and Mini App init data server-side using Telegram's signature rules.
 - Initial bot mode is private chat. Group use is optional later and needs explicit project configuration plus per-user verification.
 - Encrypt external provider credentials with a managed key. Do not put tokens in logs, build variables, source files or client responses.
+- Provider OAuth uses single-use state, PKCE where supported, exact allowlisted redirect URIs, minimal scopes and explicit user consent. Validate callback state, bind the resulting connection to the initiating workspace, support revocation, and never pass connection tokens to AI or build containers.
 - Rate-limit auth, AI, uploads, URL imports, builds, deploy and invitations.
 - Account export and deletion, data retention, backup and restore behavior are documented before production.
 
