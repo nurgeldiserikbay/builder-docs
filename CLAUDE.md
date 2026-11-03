@@ -23,6 +23,7 @@ A person with a phone and internet connection can describe a website or applicat
 - Keep workflow state, permissions, approvals, readiness and audit events deterministic and server-authoritative.
 - Treat AI output as a validated proposal. Get user confirmation before changing requirements, code or a live deployment.
 - Keep all core views mobile-first and explain each question, option, warning and next action in context.
+- Accept product requirements and business logic as sufficient input; treat a user-provided technical specification or stack preference as optional. Build the technical plan from confirmed requirements, and ask the user to choose only for decisions with material cost, ownership, access, portability, integration or deployment consequences.
 - Do not execute uploaded or generated code in API/web processes; use the isolation model in the technical specification.
 - Update migrations, API schemas, tests, docs and user-facing explanations together.
 - Provide local setup with .env.example and safe mocks for unavailable providers. Never commit real credentials.
