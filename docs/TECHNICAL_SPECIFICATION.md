@@ -52,7 +52,7 @@
 - **User:** email, имя, locale, verified state, timestamps.
 - **Workspace:** owner, название, план/лимиты, настройки.
 - **WorkspaceMember:** user, роль, приглашение, статус.
-- **Project:** workspace, owner, название, summary, тип, режим старта, status, `resumeState` для паузы, locale, active stage, выбранный stopping outcome, timestamps.
+- **Project:** workspace, owner, название, summary, тип, режим старта (`build`, `improve`, `design_implementation`, `analysis_only`, ...), status, `resumeState` для паузы, locale, active stage, выбранный stopping outcome, timestamps.
 - **ProjectMember:** project, user, project role, status.
 - **StageDefinition:** версия шаблона этапа, правила входа/выхода, допустимые зависимости.
 - **ProjectStage:** project, stage definition/version, dependencies, order, status, required flag, checklist, review policy, assignee, blocked reason and resume state.
@@ -82,6 +82,8 @@
 - **QualityProfile:** project, versioned baseline, risk classification, applicable checks, thresholds and approved exceptions.
 - **QualityCheckRun:** project/build/artifact version, profile version, runner/tool versions, environment, lifecycle state, timestamps and summary.
 - **QualityFinding:** check run, stable rule ID, severity, status, evidence reference, affected resource, remediation guidance and optional exception record.
+- **AnalysisRun:** project, requested scope, exact input artifact/URL/repository snapshot revision, selected analysis profile/version, status, checks/tools versions, started/finished timestamps, summary, limitations.
+- **AnalysisReport:** analysis run, immutable artifact/version, format, findings and recommendations, evidence references, unverified areas, exporter version.
 
 ### 4.2 Data invariants
 
@@ -94,6 +96,7 @@
 - Project requirement/decision changes increment a revision; generated plans and artifacts record the exact input revision and capability manifest version.
 - Decision preferences can only narrow supported options and steer defaults; product safety policy and explicit confirmations for external side effects always take precedence.
 - Every state-changing request creates an activity event transactionally.
+- An AnalysisRun is read-only and binds every finding to an immutable input snapshot/version; starting analysis cannot mutate source files, requirements, repository branches or deployment state.
 - A file or artifact is always scoped to a project and, when applicable, a stage; membership alone does not grant read/download permission.
 - UserAIInstruction is never sent to a model unless that exact version passed checks, is enabled by an authorized project owner/manager, and is within its declared scope.
 
@@ -248,7 +251,21 @@ The list below is the endpoint inventory, not a substitute for schemas. The Open
 - POST /api/v1/projects/:projectId/decisions/:decisionId/resolve
 - GET /api/v1/projects/:projectId/delivery-options (code custody/export and deployment capabilities with prerequisites)
 
+### Analysis-only reports
+
+Support `analysis_only` as a project start mode without generating a mandatory development route. Inputs are uploaded documents/designs/source archives, a public URL fetched only through the SSRF-safe importer, or a repository connection limited to explicit read-only scopes. The user chooses categories or accepts a recommended profile. Validate the requested source and each check against the versioned capability manifest; show unsupported/unavailable areas before starting.
+
+A run is asynchronous and idempotent. Its status is `queued | running | succeeded | partial | failed | cancelled`. Each finding includes stable ID, category, severity, confidence/status, evidence pointer to an exact file/page/line/version, plain-language explanation and remediation. The report records tools/profile/input revisions, checks run, checks skipped, access errors, limitations and unverified areas. AI may summarize or explain evidence but cannot invent findings or mark an unrun check as passed. A report is not a security certification or a guarantee that no issue exists.
+
+Analysis is read-only by default. It does not edit the input, create code changes, open a PR, deploy, approve a stage or alter confirmed requirements. Turning recommendations into work items or requesting fixes is a separate user action and follows normal stage, permission, review and quality-gate rules. Store report as an immutable artifact version and export only through access-checked short-lived links in supported formats (PDF, Markdown, JSON, HTML according to capability).
+
 ### Stages and reviews
+
+- POST /api/v1/projects/:projectId/analysis-runs
+- GET /api/v1/projects/:projectId/analysis-runs
+- GET /api/v1/projects/:projectId/analysis-runs/:runId
+- GET /api/v1/projects/:projectId/analysis-runs/:runId/report
+- POST /api/v1/projects/:projectId/analysis-runs/:runId/exports
 
 - GET /api/v1/projects/:projectId/stages
 - GET /api/v1/projects/:projectId/stages/:stageId
@@ -319,6 +336,7 @@ The concrete DTOs and response schemas are the OpenAPI contracts; arbitrary unty
 - Use secure, HTTP-only, SameSite browser cookies and CSRF protection for mutations.
 - Hash passwords with a modern adaptive password hash, or use a verified passwordless flow. Verify email before provider connections.
 - Check tenant, project and stage permissions on every API operation; the UI is not an authorization boundary.
+- Analysis input access is read-only and least-privilege. Never clone/fetch a private repository until the user authorizes the exact repository and read-only scope; never use repo credentials in AI context or build containers.
 - Authorization is deny-by-default and object-scoped: active account + project membership/delegated project access + stage scope + action permission. Workspace membership or ownership alone does not reveal private project contents; stage membership cannot grant workspace/admin powers. Use the permission matrix in PRODUCT_REQUIREMENTS.md as the policy source.
 - Telegram link token is random, single-use, hashed at rest, short-lived and revocable.
 - Validate Telegram webhook secret and Mini App init data server-side using Telegram's signature rules.
