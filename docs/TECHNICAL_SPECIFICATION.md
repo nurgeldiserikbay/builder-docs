@@ -411,3 +411,7 @@ Quality execution runs as bounded background jobs outside API processes and outs
 - Sandbox tests using valid, malformed and intentionally hostile project packages.
 
 A check with no recorded run result is unknown, not passed.
+
+## Сверка дизайна и рабочего сайта
+
+См. [DESIGN_CONFORMANCE.md](DESIGN_CONFORMANCE.md) для модели ReviewRun/ReviewPage/DesignSource/PageDesignMapping/ReviewFinding/ReviewReport, API-контрактов, асинхронных заданий сравнения, SSRF-защиты, браузерной изоляции и требований к воспроизводимым доказательствам. Сначала обновить OpenAPI и миграции; обработчики не писать до фиксации схем. Сравнение backend допускается только при наличии связанного контракта или тестового окружения и санитизированного запроса/ответа.
