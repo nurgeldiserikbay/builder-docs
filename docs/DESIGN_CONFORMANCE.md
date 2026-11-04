@@ -73,18 +73,19 @@ All entities are tenant/project scoped and use existing authorization/audit rule
 
 ## API additions
 
-The OpenAPI contract should define equivalent routes before handlers are implemented:
+The OpenAPI contract is in builder-back at apps/api/openapi.yaml. Its server base is /api/v1; the following examples show the full path:
 
-- POST /v1/projects/{projectId}/reviews — create a read-only review run.
-- POST /v1/reviews/{reviewId}/sources/url — register URL after validation.
-- POST /v1/reviews/{reviewId}/sources/design-upload — request a signed upload and register the verified asset.
-- POST /v1/reviews/{reviewId}/sources/figma — later: attach an explicitly authorized Figma file.
-- POST /v1/reviews/{reviewId}/pages/discover — enqueue bounded same-origin discovery.
-- PUT /v1/reviews/{reviewId}/page-mappings/{mappingId} — pair route, design, viewport, requirement IDs, and API operation IDs.
-- POST /v1/reviews/{reviewId}/captures — enqueue a capture for a mapped page and viewport.
-- GET /v1/reviews/{reviewId} and GET /v1/reviews/{reviewId}/report — retrieve status and versioned report.
-- PATCH /v1/reviews/{reviewId}/findings/{findingId} — update status, comment, or assignment with audit history.
-- POST /v1/reviews/{reviewId}/exports — generate authorized PDF, HTML, or JSON report.
+- POST /api/v1/projects/{projectId}/reviews — create a read-only review run.
+- POST /api/v1/reviews/{reviewId}/sources/url — register URL after validation.
+- POST /api/v1/reviews/{reviewId}/sources/design-upload — request a signed upload and register the verified asset.
+- POST /api/v1/reviews/{reviewId}/sources/figma — later: attach an explicitly authorized Figma file.
+- POST /api/v1/reviews/{reviewId}/sources/design-upload/{assetId}/complete — verify the uploaded asset before use.
+- POST /api/v1/reviews/{reviewId}/pages/discover — enqueue bounded same-origin discovery.
+- PUT /api/v1/reviews/{reviewId}/page-mappings/{pageId} — pair route, design, viewport, requirement IDs, and API operation IDs.
+- POST /api/v1/reviews/{reviewId}/captures — enqueue a capture for a mapped page and viewport.
+- GET /api/v1/reviews/{reviewId} and GET /api/v1/reviews/{reviewId}/report — retrieve status and versioned report.
+- PATCH /api/v1/reviews/{reviewId}/findings/{findingId} — update status, comment, or assignment with audit history.
+- POST /api/v1/reviews/{reviewId}/exports — generate authorized PDF, HTML, or JSON report.
 
 Long-running discovery, browser capture, image comparison, and AI review are asynchronous jobs with idempotency keys, bounded retries, progress events, and explicit terminal failure reasons. Every endpoint checks project membership and permission. No endpoint accepts arbitrary browser commands or unrestricted network targets.
 
