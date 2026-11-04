@@ -155,6 +155,94 @@ section{padding:42px 0}.section-head{display:block;margin-bottom:18px}.section-h
       <div class="final-card"><strong>Сайт можно продолжать менять.</strong><p>Добавьте языки, формы, запись, SEO-проверки или пригласите команду, когда это понадобится.</p><a class="btn" href="docs/product-blueprint.md">Посмотреть возможности&nbsp;↗</a></div>
     </div>
   </section>
+
+<style>
+.review-workspace{overflow:hidden;border:1px solid #dedbe5;border-radius:24px;background:#fff;box-shadow:0 22px 60px #28233314}
+.review-toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:9px;padding:16px;border-bottom:1px solid #ebe9ef;background:#fcfbff}
+.review-input{flex:1 1 280px;min-width:0;padding:12px 14px;border:1px solid #dedbe5;border-radius:12px;background:white;color:#353341;font:inherit;font-size:14px}
+.review-button{padding:11px 14px;border:1px solid #dedbe5;border-radius:11px;background:white;color:#514b66;font:inherit;font-size:13px;font-weight:750;cursor:pointer}
+.review-button.on{border-color:#7055df;background:#f0edff;color:#5845b8}
+.review-layout{display:grid;grid-template-columns:220px minmax(0,1fr)}
+.review-pages{padding:14px;border-right:1px solid #ebe9ef;background:#fbfaff}
+.review-pages h3{margin:4px 8px 10px;font-size:13px;color:#777584}
+.review-page{display:flex;width:100%;justify-content:space-between;gap:8px;padding:10px;border:0;border-radius:10px;background:transparent;color:#514f5c;text-align:left;font:inherit;font-size:13px;cursor:pointer}
+.review-page.active{background:#eeeaff;color:#5845b8;font-weight:800}
+.review-page small{color:#777584}
+.review-main{min-width:0;padding:16px}
+.review-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.review-head strong{font-size:15px}
+.review-badge{padding:6px 9px;border-radius:999px;background:#eef6d9;color:#526d22;font-size:11px;font-weight:800}
+.review-modes{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.review-view{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.review-frame{position:relative;overflow:hidden;min-height:300px;border:1px solid #e7e5ec;border-radius:14px;background:#eeeaf7}
+.review-label{position:absolute;z-index:2;top:10px;left:10px;padding:6px 8px;border-radius:8px;background:#242331d9;color:white;font-size:11px;font-weight:750}
+.review-canvas{position:absolute;inset:0;display:grid;place-items:center;padding:28px}
+.design-site{width:100%;max-width:220px;min-height:225px;padding:19px;border-radius:10px;background:#fff;box-shadow:0 10px 25px #29233314}
+.design-site .tiny-nav{height:12px;width:85%;margin-bottom:25px;border-radius:99px;background:#d8d1f9}
+.design-site .tiny-hero{height:70px;margin-bottom:15px;border-radius:8px;background:linear-gradient(135deg,#f2d9bb,#fcf3e9)}
+.design-site .tiny-line{height:8px;width:76%;margin:8px 0;border-radius:99px;background:#dedce4}
+.design-site .tiny-line.short{width:48%}
+.design-site .tiny-cta{height:24px;width:70px;margin-top:16px;border-radius:7px;background:#7055df}
+.design-site.live{transform:translateY(3px)}
+.design-site.live .tiny-hero{background:linear-gradient(135deg,#f2d9bb,#fcf3e9);height:82px}
+.design-site.live .tiny-cta{background:#9886e2;width:84px}
+.review-overlay{position:absolute;inset:0;display:none;place-items:center;padding:28px;background:#7055df32;clip-path:inset(0 50% 0 0);pointer-events:none}
+.review-frame.overlay-mode .review-overlay{display:grid}
+.review-slider{width:100%;margin:14px 0 4px;accent-color:#7055df}
+.review-findings{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.review-finding{padding:11px;border:1px solid #e9e6ef;border-radius:12px;background:#fff}
+.review-finding strong{display:block;font-size:12px}
+.review-finding span{display:block;margin-top:4px;color:#777584;font-size:11px}
+.review-meta{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 0}
+.review-meta span{padding:7px 9px;border-radius:9px;background:#f2f0f7;color:#62606c;font-size:11px}
+@media(max-width:760px){.review-layout{grid-template-columns:1fr}.review-pages{display:flex;overflow:auto;gap:5px;border-right:0;border-bottom:1px solid #ebe9ef}.review-pages h3{display:none}.review-page{width:auto;flex:none;white-space:nowrap}.review-main{padding:11px}.review-view{gap:6px}.review-frame{min-height:220px}.review-canvas,.review-overlay{padding:24px 10px}.design-site{min-height:180px;padding:12px}.design-site .tiny-hero{height:55px}.review-findings{grid-template-columns:1fr}.review-head{align-items:flex-start;flex-direction:column}}
+</style>
+<section class="wrap" id="design-review">
+  <div class="workspace-head">
+    <div><div class="kicker">Сверка качества</div><h2>Сайт, ТЗ, backend и макет — рядом</h2></div>
+    <p>Откройте страницу сайта и сравните её с макетом. BuildPath покажет расхождения, привяжет их к требованиям и соберёт понятный отчёт.</p>
+  </div>
+  <div class="review-workspace">
+    <div class="review-toolbar">
+      <input class="review-input" aria-label="Ссылка на сайт" value="https://preview.example.kz" readonly>
+      <button class="review-button" type="button">＋ Добавить макет / Figma</button>
+      <button class="review-button on" type="button">Проверить страницы</button>
+    </div>
+    <div class="review-layout">
+      <aside class="review-pages" aria-label="Страницы сайта">
+        <h3>СТРАНИЦЫ · 3</h3>
+        <button class="review-page active" type="button" data-review-page="Главная"><span>Главная</span><small>2 замечания</small></button>
+        <button class="review-page" type="button" data-review-page="Услуги"><span>Услуги</span><small>1 замечание</small></button>
+        <button class="review-page" type="button" data-review-page="Контакты"><span>Контакты</span><small>Проверена</small></button>
+      </aside>
+      <div class="review-main">
+        <div class="review-head"><strong id="reviewTitle">Главная · мобильная версия</strong><span class="review-badge">Требования: 4 из 5 совпали</span></div>
+        <div class="review-modes">
+          <button class="review-button on" type="button" data-review-mode="side">Рядом</button>
+          <button class="review-button" type="button" data-review-mode="overlay">Наложить макет</button>
+          <button class="review-button" type="button" data-review-mode="wipe">Сравнить границу</button>
+          <button class="review-button" type="button">▣ Телефон</button>
+        </div>
+        <div class="review-view" id="reviewView">
+          <div class="review-frame"><span class="review-label">МАКЕТ · Figma / Главная</span><div class="review-canvas"><div class="design-site"><div class="tiny-nav"></div><div class="tiny-hero"></div><div class="tiny-line"></div><div class="tiny-line short"></div><div class="tiny-cta"></div></div></div></div>
+          <div class="review-frame live-frame"><span class="review-label">САЙТ · текущий предпросмотр</span><div class="review-canvas"><div class="design-site live"><div class="tiny-nav"></div><div class="tiny-hero"></div><div class="tiny-line"></div><div class="tiny-line short"></div><div class="tiny-cta"></div></div></div></div>
+          <div class="review-overlay"><div class="design-site"><div class="tiny-nav"></div><div class="tiny-hero"></div><div class="tiny-line"></div><div class="tiny-line short"></div><div class="tiny-cta"></div></div></div>
+        </div>
+        <input class="review-slider" id="reviewSlider" type="range" min="10" max="90" value="50" aria-label="Граница сравнения">
+        <div class="review-meta"><span>Маршрут: /</span><span>Ширина: 390 px</span><span>Снимок: сейчас</span><span>Backend: API /pages · ответ 200</span></div>
+        <div class="review-findings">
+          <div class="review-finding"><strong>⚠ Заголовок переносится иначе</strong><span>Макет и сайт · вероятно, отличается ширина шрифта</span></div>
+          <div class="review-finding"><strong>✓ Основной сценарий работает</strong><span>ТЗ · форма отправлена, backend вернул успешный ответ</span></div>
+          <div class="review-finding"><strong>ИИ-подсказка · проверить</strong><span>Кнопка ниже макета на 12 px. Сверьте с оригиналом.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p style="margin:12px 4px 0;color:#777584;font-size:13px">Демонстрационный макет: реальные страницы и интеграции появятся при реализации инструмента. Снимки, проверки и выводы ИИ будут показывать источник, время и ограничения.</p>
+</section>
+<script>
+(()=>{const pages=document.querySelectorAll("[data-review-page]"),title=document.getElementById("reviewTitle"),view=document.getElementById("reviewView"),buttons=document.querySelectorAll("[data-review-mode]"),slider=document.getElementById("reviewSlider");pages.forEach(b=>b.addEventListener("click",()=>{pages.forEach(x=>x.classList.remove("active"));b.classList.add("active");title.textContent=b.dataset.reviewPage+" · мобильная версия"}));buttons.forEach(b=>b.addEventListener("click",()=>{buttons.forEach(x=>x.classList.remove("on"));b.classList.add("on");view.classList.toggle("overlay-mode",b.dataset.reviewMode==="overlay");view.classList.toggle("wipe-mode",b.dataset.reviewMode==="wipe")}));slider.addEventListener("input",()=>{document.querySelector(".review-overlay").style.clipPath="inset(0 "+(100-slider.value)+"% 0 0)";document.querySelector(".live-frame").style.clipPath="inset(0 0 0 "+slider.value+"%)"})})();
+</script>
 </main>
 <footer class="wrap"><div class="foot"><span>© BuildPath · Рабочее название проекта</span><a href="docs/product-blueprint.md">Подробная документация</a></div></footer>
 <script>
