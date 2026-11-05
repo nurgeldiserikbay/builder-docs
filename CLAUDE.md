@@ -20,7 +20,7 @@ A person with a phone and internet connection can describe a website or applicat
 ## Implementation rules
 
 - Inspect repository contents, branch state and existing tests before editing.
-- Use the specified Next.js, NestJS, PostgreSQL, Redis/BullMQ, object storage and isolated-worker baseline unless repository evidence justifies a documented adjustment.
+- Keep the three repository boundaries: `builder-back` owns NestJS API/domain/database/workers and `apps/api/openapi.yaml`; `builder-front` owns the mobile web/PWA/Telegram Mini App; `builder-admin` owns the separately authorized internal console. Use the specified Next.js, NestJS, PostgreSQL, Redis/BullMQ, object storage and isolated-worker baseline unless repository evidence justifies a documented adjustment.
 - Keep the BuildPath platform stack separate from customer-generated projects. Generated customer code must follow the versioned capability profile; never infer that a platform dependency is supported for arbitrary user projects.
 - Implement complete vertical slices; avoid placeholder buttons, fake progress and API-only stubs.
 - Keep workflow state, permissions, approvals, readiness and audit events deterministic and server-authoritative.

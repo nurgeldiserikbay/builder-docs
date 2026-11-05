@@ -5,7 +5,7 @@
 
 ## 1. Технологический стек
 
-- **Monorepo:** pnpm workspaces и Turborepo либо эквивалентный task runner.
+- **Репозитории:** три отдельных GitHub-репозитория: `builder-front`, `builder-back` и `builder-admin`. Версионированный API-контракт хранится в `builder-back/apps/api/openapi.yaml`; frontend и admin генерируют клиентские типы из опубликованной версии контракта.
 - **Веб-клиент и Telegram Mini App:** Next.js App Router, React, TypeScript, PWA и общая библиотека адаптивных UI-компонентов.
 - **API:** NestJS, TypeScript, REST API с префиксом /api/v1 и OpenAPI-контрактами.
 - **Workers:** Node.js, BullMQ; длительные задачи выполняются вне HTTP-запросов.
@@ -18,20 +18,16 @@
 
 Провайдеры ИИ, email, object storage, построения сайта, Git и hosting подключаются через интерфейсы-адаптеры. Доменный код не импортирует SDK конкретного поставщика.
 
-## 2. Структура репозитория
+## 2. Структура репозиториев
 
-- apps/web — Next.js, мобильный веб, workspace и Telegram Mini App.
-- apps/api — NestJS REST API, авторизация, webhook endpoints.
-- apps/worker — очереди ИИ, импорта, генерации сайта, build, test и deploy.
-- apps/telegram-bot — маршрутизация updates и форматирование сообщений.
-- packages/contracts — DTO, схемы валидации, OpenAPI types.
-- packages/domain — бизнес-сущности, правила состояний и use cases.
-- packages/database — Prisma schema, migrations, repositories.
-- packages/ui — доступные responsive-компоненты.
-- packages/providers — адаптеры к внешним сервисам.
-- packages/config — shared TypeScript, lint и environment validation.
+Реализация ведётся в трёх репозиториях с независимыми сборками и релизами. Контракты связывают части системы; копии доменной логики между ними не создаются.
 
-Правила домена не должны находиться в React-компонентах, Telegram handlers или контроллерах.
+- **builder-back:** NestJS REST API, OpenAPI source of truth, workers, Prisma schema/migrations, domain rules, provider adapters и серверные интеграции.
+- **builder-front:** Next.js App Router, мобильный веб, PWA и Telegram Mini App; использует типизированный клиент, сгенерированный из версии OpenAPI.
+- **builder-admin:** отдельное Next.js приложение для внутренней панели; использует тот же версионированный API-контракт и отдельную staff authorization policy.
+- Shared DTO/client code публикуется или генерируется из контракта `builder-back`; ручное копирование request/response схем запрещено.
+- Изменение API выполняется в таком порядке: изменить и проверить OpenAPI, реализовать сервер, выпустить совместимую версию контракта, обновить front/admin clients. Нельзя считать API доступным только потому, что он описан в UI.
+- Правила домена остаются в `builder-back`; их нельзя дублировать в React-компонентах, Telegram handlers или контроллерах.
 
 ## 3. Компоненты системы
 
