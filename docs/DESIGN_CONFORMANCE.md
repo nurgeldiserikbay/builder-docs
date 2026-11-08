@@ -107,3 +107,10 @@ Long-running discovery, browser capture, image comparison, and AI review are asy
 4. Add deterministic report generation and evidence-linked manual findings.
 5. Add AI summaries behind feature flags and only after sanitization, privacy, and confidence handling are in place.
 6. Add Figma read integration and authenticated-state capture after the MVP's isolation and consent flows are verified.
+
+
+## Базовые security и performance доказательства
+
+Каждый захват публичной страницы фиксирует HTTPS, наличие выбранных заголовков защиты (HSTS, CSP, X-Frame-Options или frame-ancestors, nosniff, Referrer-Policy, Permissions-Policy), browser navigation time, TTFB, объём переданных ресурсов и их число. Quality gate учитывает эти данные и помечает отсутствующие обязательные захваты как непроверенные.
+
+Это диагностический baseline по одному анонимному захвату. Он не выполняет поиск уязвимостей приложения/зависимостей, тесты TLS-конфигурации, полный Lighthouse/Core Web Vitals audit или проверку авторизованных страниц. Положительный результат отчёта не разрешает публикацию.
