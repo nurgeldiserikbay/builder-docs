@@ -8,10 +8,11 @@ Implement the product from the normative specifications below. Do not treat the 
 2. docs/ARCHITECTURE_AND_BUSINESS_LOGIC.md
 3. docs/TECHNICAL_SPECIFICATION.md
 4. docs/IMPLEMENTATION_ROADMAP.md
-5. docs/DESIGN_CONFORMANCE.md (when implementing site review and design comparison)
-6. docs/product-blueprint.md
+5. docs/STAGE_WORK_MODEL.md (stage contracts, AI-executed stages directed by owners and specialists, access scopes, start/stop at any stage)
+6. docs/DESIGN_CONFORMANCE.md (when implementing site review and design comparison)
+7. docs/product-blueprint.md
 
-Authority order: PRODUCT_REQUIREMENTS.md defines user-visible behavior and acceptance; TECHNICAL_SPECIFICATION.md is the implementation contract for architecture, APIs, data, security and operations, provided it preserves the product requirements; ARCHITECTURE_AND_BUSINESS_LOGIC.md is a schematic map and must stay consistent with those two; IMPLEMENTATION_ROADMAP.md defines delivery order; DESIGN_CONFORMANCE.md defines review-tool behavior and acceptance criteria for that feature; TECHNICAL_SPECIFICATION.md and the versioned OpenAPI contract define its implementation details. product-blueprint.md is supplementary only and is not normative. If the product requirements and technical contract conflict, do not guess: record the conflict, align the docs and then implement. Never let a schematic or legacy concept silently override a concrete requirement.
+Authority order: PRODUCT_REQUIREMENTS.md defines user-visible behavior and acceptance; TECHNICAL_SPECIFICATION.md is the implementation contract for architecture, APIs, data, security and operations, provided it preserves the product requirements; ARCHITECTURE_AND_BUSINESS_LOGIC.md is a schematic map and must stay consistent with those two; IMPLEMENTATION_ROADMAP.md defines delivery order; STAGE_WORK_MODEL.md defines the stage execution and access model and its delivery order until it is merged into the product requirements and technical specification; DESIGN_CONFORMANCE.md defines review-tool behavior and acceptance criteria for that feature; TECHNICAL_SPECIFICATION.md and the versioned OpenAPI contract define its implementation details. product-blueprint.md is supplementary only and is not normative. If the product requirements and technical contract conflict, do not guess: record the conflict, align the docs and then implement. Never let a schematic or legacy concept silently override a concrete requirement.
 
 ## Product outcome
 
