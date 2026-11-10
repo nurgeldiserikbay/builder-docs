@@ -11,7 +11,7 @@ BuildPath задуман как облачная мастерская, кото�
 - [План полной реализации](docs/IMPLEMENTATION_ROADMAP.md) — порядок вертикальных этапов и условия завершения каждого.
 - [Модель работы по этапам](docs/STAGE_WORK_MODEL.md) — ИИ выполняет этапы, владелец и специалисты направляют его инструкциями; доступ, старт и остановка на любом этапе.
 - [Тарифы и лимиты](docs/PLANS.md)
-- [Черновик политики конфиденциальности](docs/legal/PRIVACY_POLICY_DRAFT.md) и [черновик оферты](docs/legal/TERMS_OFFER_DRAFT.md) — для проверки юристом
+- [Оферта и политика конфиденциальности](docs/legal/README.md) — где лежат тексты, что подставляется, как выпустить новую редакцию; [вопросы юристу](docs/legal/OPEN_QUESTIONS.md)
 - Запуск на сервере: [builder-back/deploy/README.md](https://github.com/nurgeldiserikbay/builder-back/blob/main/deploy/README.md)
 - [Текущий статус реализации](docs/IMPLEMENTATION_STATUS.md) — что уже работает, что ограничено и что ещё не реализовано.
 - [Инструкции для Claude Code](CLAUDE.md) — нормативные документы и правила реализации.
