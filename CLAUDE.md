@@ -8,7 +8,7 @@ Implement the product from the normative specifications below. Do not treat the 
 2. docs/ARCHITECTURE_AND_BUSINESS_LOGIC.md
 3. docs/TECHNICAL_SPECIFICATION.md
 4. docs/IMPLEMENTATION_ROADMAP.md
-5. docs/STAGE_WORK_MODEL.md (stage contracts, AI-executed stages directed by owners and specialists, access scopes, start/stop at any stage)
+5. docs/STAGE_WORK_MODEL.md (stage contracts, AI-executed stages directed by owners and specialists, access scopes, start/stop at any stage; Part II: project map, contracts and parallel work, change notices between stages, choice cards for code hosting, deployment and technologies, access to external resources)
 6. docs/DESIGN_CONFORMANCE.md (when implementing site review and design comparison)
 7. docs/product-blueprint.md
 
