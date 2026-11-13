@@ -262,6 +262,7 @@ Analysis is read-only by default. It does not edit the input, create code change
 - GET /api/v1/projects/:projectId/analysis-runs/:runId
 - GET /api/v1/projects/:projectId/analysis-runs/:runId/report
 - POST /api/v1/projects/:projectId/analysis-runs/:runId/exports
+  - Implemented first version (STAGE_WORK_MODEL.md §40): sources `file` (ZIP stage file), `repository`, `public_repo` (GitHub); export is `GET …/analysis-runs/:runId/export?format=md|json` with the session instead of a short-lived link.
 
 - GET /api/v1/projects/:projectId/stages
 - GET /api/v1/projects/:projectId/stages/:stageId
@@ -281,6 +282,7 @@ Analysis is read-only by default. It does not edit the input, create code change
 - GET /api/v1/projects/:projectId/stages/:stageId/materials (authorized list and stage policy)
 - POST /api/v1/projects/:projectId/stages/:stageId/materials/upload-intents
 - POST /api/v1/projects/:projectId/stages/:stageId/materials/:materialId/complete
+  - Implemented first version (STAGE_WORK_MODEL.md §40): `GET|POST /projects/:projectId/stages/:stageKey/files` (multipart, bytes stored in the database like project images, scanned before storing), `GET|DELETE …/files/:fileId`. Upload intents with object storage remain the target for large files.
 - POST /api/v1/projects/:projectId/stages/:stageId/exports (artifact/version and requested format)
 - GET /api/v1/exports/:exportId (authorized status and short-lived download URL)
 - POST /api/v1/projects/:projectId/ai-instructions (create from validated text or completed upload)
