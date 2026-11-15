@@ -202,6 +202,10 @@ The list below is the endpoint inventory, not a substitute for schemas. The Open
 - POST /api/v1/auth/logout
 - POST /api/v1/auth/verify-email
 - POST /api/v1/auth/password/reset
+- GET /api/v1/auth/providers — which external sign-in methods are switched on
+- GET /api/v1/auth/google/start, GET /api/v1/auth/google/callback — sign-in with Google
+
+Sign-in with Google uses the authorization code flow with PKCE (S256), a single-use `state` stored as a hash for 10 minutes, a `nonce`, and an HttpOnly binding cookie scoped to `/api/v1/auth/google` that ties the callback to the browser that started it. The ID token is verified against Google's published keys (RS256 only; issuer, audience, expiry, nonce) and is accepted only when Google reports the email as verified. Account resolution: (1) an existing link to the same Google subject signs in that user; (2) otherwise an account with the same email is linked — if that account never confirmed its email, its password is disabled, its sessions and pending verification/reset tokens are revoked, and it becomes verified, so an unconfirmed squatter account cannot keep access; a confirmed account keeps its password; (3) otherwise a verified account with a personal workspace is created and the consent gate asks for the offer and privacy policy before any other work (`consentFirstTime` in `GET /me`). Refused: an account already linked to a different Google subject, a deleted account, an unverified Google email. Failures return to `/login?error=CODE`. The button is hidden inside Telegram, whose in-app browser Google blocks. Configuration: `GOOGLE_OAUTH_CLIENT_ID`, `GOOGLE_OAUTH_CLIENT_SECRET`, `PUBLIC_APP_URL`; redirect URI `${PUBLIC_APP_URL}/api/v1/auth/google/callback`. Without them the button is not shown.
 - GET /api/v1/me
 - POST /api/v1/me/exports
 - POST /api/v1/me/deletion-requests
