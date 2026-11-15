@@ -336,6 +336,7 @@ The concrete DTOs and response schemas are the OpenAPI contracts; arbitrary unty
 ## 9. Security and privacy
 
 - Use secure, HTTP-only, SameSite browser cookies and CSRF protection for mutations.
+  CSRF protection: SameSite=Lax alone is not enough because published customer sites are subdomains of the platform domain (same-site for the browser). The API therefore refuses POST/PUT/PATCH/DELETE with `403 ORIGIN_NOT_ALLOWED` when `Origin` is not `PUBLIC_APP_URL`, an entry of `CORS_ORIGINS`, `ADMIN_PUBLIC_URL` or the request's own host, and, without `Origin`, when `Sec-Fetch-Site` is `same-site` or `cross-site`. Signed server callbacks (Telegram webhook, payment result) are exempt. Staff sign-in is additionally limited per client address.
 - Hash passwords with a modern adaptive password hash, or use a verified passwordless flow. Verify email before provider connections.
 - Check tenant, project and stage permissions on every API operation; the UI is not an authorization boundary.
 - Analysis input access is read-only and least-privilege. Never clone/fetch a private repository until the user authorizes the exact repository and read-only scope; never use repo credentials in AI context or build containers.
