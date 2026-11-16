@@ -333,6 +333,14 @@ The concrete DTOs and response schemas are the OpenAPI contracts; arbitrary unty
 - Automatically delete expired workspaces and temporary artifacts according to retention policy.
 - Production hostile-code boundary must use a dedicated isolation runtime such as gVisor, Firecracker or equivalent. Docker alone is development-only.
 
+### 8.1 Sandbox provider (implemented: starter code of web applications)
+
+- Interface `SandboxProvider.run({ files, commands, internet, lifetimeMs, labels })` → per command `passed|failed|timed_out|skipped`, exit code, duration and the last 6000 characters of output with terminal control codes removed. A failed step skips the rest. The machine is destroyed after every run, including on errors.
+- First provider: E2B (Firecracker microVMs, billed per second), enabled by `SANDBOX_PROVIDER=e2b` and `E2B_API_KEY`; template `E2B_TEMPLATE` (default `base`, needs Node.js 20+). Commands get no platform environment (only `CI=1`), work in `/home/user/project`, and run with internet off unless a job asks for it. Another provider (own Firecracker/gVisor host) plugs in behind the same interface.
+- Jobs live in `sandbox_runs` (`queued → running → succeeded|failed|unavailable`), sent by the worker (`SANDBOX_WORKER=external` stops the API from sending them too); stale running jobs are reclaimed up to 3 attempts. The stored files are what the owner downloads; their SHA-256 digest is checked before sending, so a changed queue entry is never run. Without a configured provider the run ends `unavailable` with `SANDBOX_NOT_CONFIGURED` — the code was not run, not failed.
+- First job kind `starter_check`: the platform turns the accepted package of the web application route (data schema → resources, features → rights by role) into a dependency-free Node.js API with `node:test` tests, deterministically and without AI, and runs `node` version, `node --check` and `node --test` offline. At most 5 runs per package version; a run of an older package is marked `outdated`. API: `GET/POST /projects/{id}/handoff/starter`, `GET /projects/{id}/handoff/starter/files`. Nothing is published, pushed or deployed.
+- AI-generated code will use the same path after deterministic validation against the capability profile; it is not enabled yet.
+
 ## 9. Security and privacy
 
 - Use secure, HTTP-only, SameSite browser cookies and CSRF protection for mutations.
