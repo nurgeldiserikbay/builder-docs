@@ -354,7 +354,8 @@ The concrete DTOs and response schemas are the OpenAPI contracts; arbitrary unty
 - After the loop the platform runs `npm install`, `npm test`, `npm run build` itself (a missing script is `skipped`, never `passed`) and collects up to 400 files / 3 MB, without installed packages, build output, `.git` and `.env*` except `.env.example`.
 - The task prompt (system rules of profile `node-react-pg@1.0.0` + the package as untrusted data) is stored with a SHA-256 digest over a fixed order; a task whose prompt changed after queueing is not run. A task left `running` past 45 min (process died) ends `AGENT_INTERRUPTED` and is not retried.
 - Billing: plan, spend limit and balance are checked through `reserveAi` before queueing; one `generation_runs` row (`targetKey: agent_task`) with the task's total tokens and cost is written at the end.
-- Not yet: package-registry-only egress, push to the owner's git (step 2), preview (step 3), deploy (step 4).
+- Step 2 (implemented): `POST /projects/{id}/agent/tasks/{taskId}/push {confirm: true}` (owners and managers) sends the task's files, after checking their digest, to branch `buildpath/agent-<task>` made from the repository's main branch, and opens a pull/merge request whose text is the agent's report, the platform's checks and an AI-authorship note. Clients: `ensureBranch` and `openPullRequest` for GitHub, GitLab, Gitea/Forgejo and Bitbucket; a repeat reuses the branch and the open request; an empty repository gets the code as its first commit on the main branch; SSH servers get the branch only. The repository token never enters the sandbox.
+- Not yet: package-registry-only egress, preview (step 3), deploy (step 4).
 
 ## 9. Security and privacy
 
