@@ -347,6 +347,15 @@ The concrete DTOs and response schemas are the OpenAPI contracts; arbitrary unty
 - Code policy 1.0.0 (acorn AST, deterministic): allowed imports per file; no `process`, `require`, `eval`, `Function`, `globalThis`, dynamic `import`, `import.meta`, `with`, `constructor`/`__proto__` access; no `fetch` in rules; `check` exported; at least one test; 40 000 characters per file. Code that fails is stored `rejected` with `CODE_POLICY_FAILED` and its issues; it is never queued and never handed out. The policy keeps the project within the profile; the sandbox remains the security boundary.
 - One AI request per generation, counted like other AI requests (daily limit, plan, spend limit, specialist budget), also when rejected; at most 10 per package version. API: `GET/POST /projects/{id}/handoff/app-code`, `GET /projects/{id}/handoff/app-code/files`.
 
+### 8.3 AI agent (implemented: step 1 — build the application in a sandbox)
+
+- Job kind `agent_task` (`agent_tasks`: queued → running → succeeded|failed|stopped|unavailable). The worker opens one E2B sandbox for the whole task (lifetime = task time + 15 min), with internet for package registries and only `CI=1` in the environment; model and platform keys stay in the worker.
+- Loop (`agent-loop.ts` 1.0.0): Chat Completions with tools `list_files`, `read_file`, `write_file`, `run`, `finish`; paths confined to the project (no absolute, `..`, `.git`, `node_modules`); file ≤ 200 000 characters; tool output to the model ≤ 8 000 characters; limits on turns (80), wall time (30 min) and money (`AGENT_TASK_MAX_COST_KZT`), checked before every turn together with the stop flag.
+- After the loop the platform runs `npm install`, `npm test`, `npm run build` itself (a missing script is `skipped`, never `passed`) and collects up to 400 files / 3 MB, without installed packages, build output, `.git` and `.env*` except `.env.example`.
+- The task prompt (system rules of profile `node-react-pg@1.0.0` + the package as untrusted data) is stored with a SHA-256 digest over a fixed order; a task whose prompt changed after queueing is not run. A task left `running` past 45 min (process died) ends `AGENT_INTERRUPTED` and is not retried.
+- Billing: plan, spend limit and balance are checked through `reserveAi` before queueing; one `generation_runs` row (`targetKey: agent_task`) with the task's total tokens and cost is written at the end.
+- Not yet: package-registry-only egress, push to the owner's git (step 2), preview (step 3), deploy (step 4).
+
 ## 9. Security and privacy
 
 - Use secure, HTTP-only, SameSite browser cookies and CSRF protection for mutations.
